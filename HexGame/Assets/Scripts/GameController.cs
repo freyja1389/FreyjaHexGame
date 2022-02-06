@@ -7,13 +7,14 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     //make the end hex another color +
-    //visualise player and active neighbors
+    //visualise player and active neighbors+
     //hitbar
     //win logic
     public int Columns = 0;
     public Text PlayersHPTextBox;
     public BaseCell[,] HexCells;
     public int Rows = 0;
+    public Image Bar;
 
     [SerializeField]
     private MapGenerator mGenerator;
@@ -48,7 +49,8 @@ public class GameController : MonoBehaviour
     };
 
     void Start()
-    { 
+    {
+        Bar.fillAmount = 1f;
         HexCells = mGenerator.MapCreate(Rows, Columns, mGenerator.transform, player);
         neighbors = GetAvailableCells(mGenerator.StartCell);
         foreach (var neighbor in neighbors)
@@ -79,6 +81,7 @@ public class GameController : MonoBehaviour
             }
 
             PlayersHPTextBox.text = "Player's HP: " + player.HitPoints;
+            Bar.fillAmount = (float)player.HitPoints/100;
             playerPositionInMap = cellClicked.CellIndex;
 
             player.Relocation(cellClicked.transform.position);
