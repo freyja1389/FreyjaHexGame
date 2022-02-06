@@ -5,6 +5,7 @@ using UnityEngine;
 public class EmptyCell : BaseCell
 {
     public bool StartCell;
+    public bool EndCell;
     // Start is called before the first frame update
     void Start()
     {

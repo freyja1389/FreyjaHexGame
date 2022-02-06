@@ -328,7 +328,9 @@ MonoBehaviour:
   - {fileID: 8451103840548348871, guid: c2d0e99725a7dcf43a45d02996d71c4a, type: 3}
   - {fileID: -2984024884631427007, guid: 54fc418c87f15274991be1be2d93b47a, type: 3}
   - {fileID: 6934251546433787522, guid: 1d8b5e6face1e9e4b989a934c2d2590f, type: 3}
+  PlayerPrefab: {fileID: 6245587092684846837, guid: 06ee3a7a3545b2949baf1d81eab171d0, type: 3}
   StartCell: {fileID: 8873300728344488388, guid: bc7398c01dcb52042971cfa1a567dc8e, type: 3}
+  EndCell: {fileID: -2984024884631427007, guid: dc1b6edad5deeda4a8a6ad2854c21738, type: 3}
 --- !u!4 &940905551
 Transform:
   m_ObjectHideFlags: 0
@@ -636,7 +638,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52f64829c02e7034bb2bc1334f5c465c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 100
+  PlayerInstance: {fileID: 0}
+  hitPoints: 0
 --- !u!23 &1553312209
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -707,11 +710,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6596ccdc5ad1b1549828a6d66676c7bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rows: 10
   Columns: 10
   PlayersHPTextBox: {fileID: 243520848}
+  Rows: 10
   mGenerator: {fileID: 940905550}
   player: {fileID: 1553312208}
+  materials:
+  - {fileID: 2100000, guid: 66b5ba44cd2dac14b85b5b40a2b33861, type: 2}
+  - {fileID: 2100000, guid: 6345f2b9ed1d8df4aa4b15f3cf1e6d40, type: 2}
+  - {fileID: 2100000, guid: 6b5af0c190fab61418f29af8099d38f6, type: 2}
+  - {fileID: 2100000, guid: 0a239bb40b8bae046bb654e6b53ded33, type: 2}
+  - {fileID: 2100000, guid: aeb14df3bd3213b4584807444d11324d, type: 2}
 --- !u!4 &1776309244
 Transform:
   m_ObjectHideFlags: 0

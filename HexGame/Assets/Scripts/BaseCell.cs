@@ -7,6 +7,7 @@ public abstract class BaseCell : MonoBehaviour
 {
     public event Action<BaseCell> CellClicked;
     public Vector2Int CellIndex;
+    public bool Open;
 
     public void Activate()
     {
@@ -16,5 +17,10 @@ public abstract class BaseCell : MonoBehaviour
     protected virtual void OnMouseUpAsButton()
     {             
         CellClicked?.Invoke(this);
+    }
+
+    public void SetMaterial(Material material)
+    {
+        GetComponentInChildren<MeshRenderer>().material = material;
     }
 }

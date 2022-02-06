@@ -10,13 +10,14 @@ public class MapGenerator:MonoBehaviour
 
     [SerializeField]
     private List<BaseCell> hexCellPrefabs = new List<BaseCell>();
+    [SerializeField]
+    private GameObject PlayerPrefab;
 
-   public  BaseCell StartCell;
-
-    //public List<List<HexCell>> HexCells = new List<List<HexCell>>();
+    public  BaseCell StartCell;
+    public BaseCell EndCell;
 
     public BaseCell[,] HexCells;
-    public BaseCell[,] MapCreate(int rows, int columns, Transform transform)
+    public BaseCell[,] MapCreate(int rows, int columns, Transform transform, Player player)
     {
         BaseCell cellType = null;
         HexCells = new BaseCell[rows, columns];
@@ -30,12 +31,25 @@ public class MapGenerator:MonoBehaviour
                 if (i == 0 & j == 0)
                 {
                     cellType = StartCell;
+                    ((EmptyCell)StartCell).StartCell = true;
+                }
+                else if (i == rows - 1 & j == columns - 1)
+                {
+                    cellType = EndCell;
                 }
                 else
                 {
                     cellType = hexCellPrefabs[UnityEngine.Random.Range(0, hexCellPrefabs.Count)];
                 }
                 var instance = Instantiate(cellType, GetPosition(i, j), cellType.transform.rotation, transform);
+                if (instance  is EmptyCell)
+                {
+                    if (((EmptyCell)instance).StartCell)
+                    {
+                        var playerInst = Instantiate(PlayerPrefab, StartCell.transform.position, transform.rotation);
+                        player.PlayerInstance = playerInst;
+                    }
+                }
                 if (cellType is EnemyCell enemy)
                 {
                     enemy.DmgPoints = UnityEngine.Random.Range(3, 25);
@@ -47,6 +61,7 @@ public class MapGenerator:MonoBehaviour
                 //list.Add(instance);
                 HexCells[i, j] = instance;
                 instance.CellIndex = new Vector2Int(i, j);
+                instance.name = instance.name + instance.CellIndex.ToString();
             }
         }
         return HexCells;
