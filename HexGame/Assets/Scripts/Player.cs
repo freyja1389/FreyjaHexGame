@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public int HitPoints => hitPoints;
+    public int DmgPoints;
     public GameObject PlayerInstance;
 
     [SerializeField]
@@ -12,12 +13,14 @@ public class Player : MonoBehaviour
 
     public void SetDamage(int value)
     {
-        hitPoints -= value;
+        hitPoints = Mathf.Clamp(hitPoints - value, 0, 100);
     }
 
     public void SetHeal(int value)
-    { 
-        hitPoints += value;
+    {
+      
+            //hitPoints += value <= 100 ? hitPoints : 100;
+            hitPoints = Mathf.Clamp(hitPoints + value, 0, 100);
     }
 
     public void ChangePosition(Vector3 position)

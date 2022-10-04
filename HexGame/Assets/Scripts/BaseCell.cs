@@ -11,7 +11,7 @@ public abstract class BaseCell : MonoBehaviour
 
     public void Activate()
     {
-        GetComponent<Rigidbody>().useGravity = true;
+       // GetComponent<Rigidbody>().useGravity = true;
     }
 
     protected virtual void OnMouseUpAsButton()

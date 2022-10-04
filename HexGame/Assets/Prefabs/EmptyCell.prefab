@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6423630488613132568}
   - component: {fileID: -2984024884631427007}
-  - component: {fileID: 6468362641377443956}
+  - component: {fileID: -5933637131876518561}
   m_Layer: 0
   m_Name: EmptyCell
   m_TagString: Untagged
@@ -46,9 +46,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CellIndex: {x: 0, y: 0}
+  Open: 0
   StartCell: 0
   EndCell: 0
---- !u!54 &6468362641377443956
+--- !u!54 &-5933637131876518561
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

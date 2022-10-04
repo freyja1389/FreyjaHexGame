@@ -45,8 +45,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CellIndex: {x: 0, y: 0}
+  Open: 0
   StartCell: 0
   EndCell: 0
+  EnemyCell: 0
+  BonusCell: 0
+  Opened: 0
+  ContentLink: {fileID: 0}
 --- !u!1001 &662020081528127640
 PrefabInstance:
   m_ObjectHideFlags: 0

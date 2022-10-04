@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6423630488613132568}
   - component: {fileID: 8451103840548348871}
-  - component: {fileID: 3043892527641996093}
+  - component: {fileID: 6462171242033328709}
   m_Layer: 0
   m_Name: BonusCell
   m_TagString: Untagged
@@ -46,8 +46,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CellIndex: {x: 0, y: 0}
-  HealPoints: 22
---- !u!54 &3043892527641996093
+  Open: 0
+  HealPoints: 12
+--- !u!54 &6462171242033328709
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6423630488613132568}
   - component: {fileID: 6934251546433787522}
-  - component: {fileID: -6148508541238322803}
+  - component: {fileID: 991464895360583645}
   m_Layer: 0
   m_Name: EnemyCell
   m_TagString: Untagged
@@ -46,8 +46,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CellIndex: {x: 0, y: 0}
-  DmgPoints: 19
---- !u!54 &-6148508541238322803
+  Open: 0
+  DmgPoints: 8
+  HitPoints: 0
+--- !u!54 &991464895360583645
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
