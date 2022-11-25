@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 HexGame/Library/
 HexGame/Temp/
+*.csproj
+*.sln
+HexGame/UserSettings/
