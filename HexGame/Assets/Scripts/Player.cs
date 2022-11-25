@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
             hitPoints = Mathf.Clamp(hitPoints + value, 0, 100);
     }
 
-    public void ChangePosition(Vector3 position)
+    public void RelocateInstantly(Vector3 position)
     { 
         transform.position = position;
     }

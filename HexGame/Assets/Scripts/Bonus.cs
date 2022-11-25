@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
+
 
 public class Bonus : CellContent
 {
@@ -14,7 +14,7 @@ public class Bonus : CellContent
     // Start is called before the first frame update
     void Start()
     {
-
+        HealPoints = SetHealPoints();
     }
 
     // Update is called once per frame
@@ -22,8 +22,12 @@ public class Bonus : CellContent
     {
 
     }
-   // public  void OnMouseUpAsButton()
+    private int SetHealPoints()
+    {
+        return Random.Range(5, 15);
+    }
+    // public  void OnMouseUpAsButton()
     //{
     //    CellClicked?.Invoke(this);
-   // }
+    // }
 }

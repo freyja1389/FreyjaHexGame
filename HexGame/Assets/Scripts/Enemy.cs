@@ -1,37 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System;
+
 
 public class Enemy : CellContent
 {
     public int DmgPoints;
     public int HitPoints;
+    public  UIController HitBar;
+   public UIController EnemyHitBarPref;
     // Start is called before the first frame update
-    void Start()
-    {
-        HitPoints = SetHitPoints();
-        DmgPoints = SetDmgPoints();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+  
     public int SetDamage(int dmg)
     {
         HitPoints = HitPoints - dmg;
         return HitPoints;
     }
 
-    private int SetHitPoints()
+    protected virtual int SetHitPoints()
     {
-        return Random.Range(30, 30 * 3);
+        return UnityEngine.Random.Range(30, 30 * 3);
     }
 
-    private int SetDmgPoints()
+    protected virtual int SetDmgPoints()
     {
-        return Random.Range(5, 10 * 3);
+        return UnityEngine.Random.Range(5, 10 * 3);
     }
 }

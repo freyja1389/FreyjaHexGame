@@ -15,7 +15,12 @@ public abstract class BaseCell : MonoBehaviour
     }
 
     protected virtual void OnMouseUpAsButton()
-    {             
+    {
+        RiseCellClicked();
+    }
+
+    protected void  RiseCellClicked()
+    {
         CellClicked?.Invoke(this);
     }
 

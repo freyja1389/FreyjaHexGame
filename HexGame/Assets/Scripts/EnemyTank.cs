@@ -1,20 +1,14 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CellContent : MonoBehaviour
+public class EnemyTank : Enemy
 {
-    public event Action ContentClicked;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
-    }
-
-    protected virtual void OnMouseUpAsButton()
-    {
-        ContentClicked?.Invoke();
+        HitPoints = SetHitPoints();
+        DmgPoints = SetDmgPoints();
     }
 
     // Update is called once per frame
@@ -22,5 +16,9 @@ public class CellContent : MonoBehaviour
     {
         
     }
+
+    protected override int SetHitPoints()
+    {
+        return Random.Range(50, 50 * 3);
+    }
 }
- 

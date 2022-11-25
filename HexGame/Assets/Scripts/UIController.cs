@@ -1,20 +1,17 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class CellContent : MonoBehaviour
+public class UIController : MonoBehaviour
 {
-    public event Action ContentClicked;
+    [SerializeField]
+    private Image enemyHitBar;
+
     // Start is called before the first frame update
     void Start()
     {
         
-    }
-
-    protected virtual void OnMouseUpAsButton()
-    {
-        ContentClicked?.Invoke();
     }
 
     // Update is called once per frame
@@ -22,5 +19,9 @@ public class CellContent : MonoBehaviour
     {
         
     }
+
+    public void ChangeHitBarFillAmount(int hp)
+    {
+        enemyHitBar.fillAmount = (float)hp / 100;
+    }
 }
- 
