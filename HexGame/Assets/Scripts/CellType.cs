@@ -3,5 +3,6 @@
     StartCell,
     EndCell,
     EnemyCell,
-    BonusCell
+    BonusCell, 
+    EmptyCell
 }

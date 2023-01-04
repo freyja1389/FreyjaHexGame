@@ -22,4 +22,25 @@ public class EnemyHealer : Enemy
     {
         return Random.Range(2, 2 * 3);
     }
+
+    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked)
+    {
+        //GetHealToOpenEnemies(HealPoints, openEnemy);
+
+        base.OnContentClicked(player, openEnemy, cellClicked);
+    }
+    private void GetHealToOpenEnemies(int healpoints, List<Enemy> openEnemy)
+    {
+        foreach (Enemy enemy in openEnemy)
+        {
+            enemy.HitPoints += healpoints;
+            enemy.HitBar.ChangeHitBarFillAmount(enemy.HitPoints);
+        }
+    }
+
+    public override void OnAnyCellClicked(List<Enemy> openEnemy)
+    {
+        GetHealToOpenEnemies(HealPoints, openEnemy);
+    }
+
 }

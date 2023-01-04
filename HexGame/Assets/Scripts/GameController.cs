@@ -13,16 +13,18 @@ public class GameController : MonoBehaviour
     //hitbar +
     //win logic
     public int Columns = 0;
-    public Text PlayersHPTextBox;
+    //public Text PlayersHPTextBox;
     //public List<BaseCell> HexCells;
     public BaseCell[,] HexCells;
     public int Rows = 0;
-    public Image Bar;
+   // public Image Bar;
     public GameObject MenuPanel;
     public MenuControls Menu;
     public Text LvlInfo;
     // public UIController EnemyHitBarPref;
     public Canvas WSCanvas;
+    public Canvas UICanvas;
+    public UIController UIController;
 
     [SerializeField]
     private MapGenerator mGenerator;
@@ -31,7 +33,7 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private Material[] materials;
     [SerializeField]
-    private GameObject GameOverTextBar;
+    //private GameObject GameOverTextBar;
 
     private List<BaseCell> neighbors;
     private Vector2Int playerPositionInMap;
@@ -39,6 +41,8 @@ public class GameController : MonoBehaviour
     private string filePath;
     private BaseCell PrevCell;
     public List<Enemy> OpenEnemy;
+
+
 
     public readonly List<Vector2Int> neighborRulesEvenY = new List<Vector2Int> //чет y
     {
@@ -66,7 +70,7 @@ public class GameController : MonoBehaviour
         filePath = Application.persistentDataPath + @"\ProgressData";
         LoadProgress();
         LvlInfo.text = "Lvl:" + playerProgress.Lvl;
-        Bar.fillAmount = 1f;
+        UIController.ShowPlayerHP(player);
         //HexCells = mGenerator.MapCreate1(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
         HexCells = mGenerator.MapGenerate(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
         neighbors = GetAvailableCells(mGenerator.StartCell);
@@ -94,54 +98,18 @@ public class GameController : MonoBehaviour
         PrevCell = mGenerator.StartCell;
     }
 
-    public void cellUsed(CellContent content)
-    {
-        if (content is Bonus bonus)
-        {
-            player.SetHeal(bonus.HealPoints);
-            PlayersHPTextBox.text = "Player's HP: " + player.HitPoints;
-            Bar.fillAmount = (float)player.HitPoints / 100;
-            Destroy(content.gameObject);
-        }
-        else if (content is Enemy enemy)// enemy
-        {
-            player.SetDamage(enemy.DmgPoints);
-            if (enemy is EnemyHealer)
-            {
-                EnemyHealer healer = (EnemyHealer)enemy;
-                GetHealToOpenEnemies(healer.HealPoints);
-            }
-            PlayersHPTextBox.text = "Player's HP: " + player.HitPoints;
-            Bar.fillAmount = (float)player.HitPoints / 100;
+    public void cellUsed(EmptyCell cellClicked)
+    {  
+        var content = cellClicked.ContentLink;
+        content.OnContentClicked(player, OpenEnemy, cellClicked);
 
-            if (player.HitPoints <= 0)
-            {
-                var instGameOverText = Instantiate(GameOverTextBar, new Vector3(0, 0, 0), Quaternion.identity);
-                var canv = GameObject.FindGameObjectWithTag("MainCanvas");
-                instGameOverText.transform.SetParent(canv.transform, false);
-                var text = instGameOverText.GetComponent<Text>();
-                text.text = "Game Over!";
-            }
-            else
-            {
-                enemy.SetDamage(player.DmgPoints);
-                //enemy.HitBar.GetComponentsInChildren<Image>()[1].fillAmount = (float)enemy.HitPoints / 100;
-                enemy.HitBar.ChangeHitBarFillAmount(enemy.HitPoints);
-                if (enemy.HitPoints <= 0)
-                {
-                    var enemyCont = content as Enemy;
-                    Destroy(enemyCont.HitBar.gameObject);
-                    Destroy(content.gameObject);
-                    OpenEnemy.Remove(enemy);
-                }
-                /*else
-                {
-                    PlayersHPTextBox.text = "Player's HP: " + player.HitPoints;
-                    Bar.fillAmount = (float)player.HitPoints / 100;
-                }*/
-            }
-        }
+        UIController.ShowPlayerHP(player);
+        CheckPlayerDeath();
 
+        if (cellClicked.gameObject == null)
+        {
+            PrevCell = OnCellActivated(cellClicked, PrevCell);
+        }
     }
 
     public void GetHealToOpenEnemies(int healpoints)
@@ -160,16 +128,11 @@ public class GameController : MonoBehaviour
 
     private void CheckPlayerDeath()
     {
-        if (player.HitPoints < 0)
+        if (player.HitPoints <= 0)
         {
-            var instGameOverText = Instantiate(GameOverTextBar, new Vector3(0, 0, 0), Quaternion.identity);
-            var canv = GameObject.FindGameObjectWithTag("MainCanvas");
-            instGameOverText.transform.SetParent(canv.transform, false);
-            var text = instGameOverText.GetComponent<Text>();
-
-            PlayersHPTextBox.text = "Player's HP: " + player.HitPoints;
-            Bar.fillAmount = (float)player.HitPoints / 100;
-            text.text = "Game Over!";
+            UIController.ShowPlayerHP(player);
+            var text = "Game Over!";
+            UIController.ShowWinLooseInformation(text);
         }
     }
 
@@ -186,18 +149,25 @@ public class GameController : MonoBehaviour
         }
     }
     
+    public void OnUseBonus(Bonus bonus)
+    {
+        bonus.OnContentApplied(player, OpenEnemy);
+        UIController.ShowPlayerHP(player);
+    }
+   
+    private void MoveBonusIntoBonusCell(Bonus bonus, BaseCell cellClicked)
+    {
+        player.SetBonusInBonusCell(bonus);
+        bonus.gameObject.SetActive(false);
+        var BonusButton = UIController.RelocateBonusIntoBonusCell(bonus, player);
+        BonusButton.UseBonus += OnUseBonus;
+        OnCellActivated(cellClicked, PrevCell);
+    }
     public void OnCellClicked(BaseCell cellClicked)
     {
         if (!IsNeighbor(cellClicked)) return;
 
         var emptyCell = (EmptyCell)cellClicked;
-
-        if (emptyCell.ContentLink == null)
-        {
-            MovePlayer(emptyCell);//move player here
-            emptyCell.Opened = true;
-            return;
-        }
 
         if (!emptyCell.Opened)
         {
@@ -205,14 +175,41 @@ public class GameController : MonoBehaviour
             emptyCell.ShowContent(WSCanvas);
             emptyCell.ShownContent -= OnContentShown;
             emptyCell.Opened = true;
-            // emptyCell.ContentLink.ContentClicked += OnContentClicked;
-            return;
+            if (emptyCell.ContentLink  is Bonus bonus)
+            {
+                bonus.ParentCell = cellClicked;
+                bonus.MoveBonusIntoBonusCell += MoveBonusIntoBonusCell;
+            }
+            if (!(emptyCell.ContentLink == null))
+            {
+                return;
+            }
         }
 
-       
+        if (emptyCell.ContentLink == null)
+        {           
+            emptyCell.Opened = true;
+            if (cellClicked == mGenerator.EndCell)
+            {   
+                cellClicked.SetMaterial(materials[5]);
+                playerProgress.Lvl++;
+                SaveProgress();
+                UIController.ShowPlayerHP(player);
+                var text = "You Win!";
+                UIController.ShowWinLooseInformation(text);
 
-        cellUsed(emptyCell.ContentLink);
-
+            }
+                PrevCell = OnCellActivated(cellClicked, PrevCell);
+            //return;
+        }
+        else
+        {
+            cellUsed(emptyCell);
+        }
+        foreach (CellContent enemy in OpenEnemy)
+        {
+            enemy.OnAnyCellClicked(OpenEnemy);
+        }
     }
 
     public void OnStartClicked()
@@ -288,51 +285,29 @@ public class GameController : MonoBehaviour
 
     private void SetNeighbornsMaterial(BaseCell cellClicked)
     {
-        /*foreach (var neighbor in neighbors)
-        {
-            if (!neighbor.Open)
-            {
-                if ((neighbor is EmptyCell empty))
-                {
-                    if (!(empty.CellType == EmptyCell.CellTypes.StartCell) & !(empty.CellType == EmptyCell.CellTypes.EndCell))
-                    {
-                        neighbor.SetMaterial(materials[0]);
-                    }
-                }
-                else
-                {
-                    neighbor.SetMaterial(materials[0]);
-                }
-            }
-        }*/
+
         neighbors = GetAvailableCells(cellClicked);
         foreach (var neighbor in neighbors)
         {
-            if (!neighbor.Open)
+            var empty = (EmptyCell)neighbor;
+
+            if (empty.CellType == CellType.StartCell)//StartCell
             {
-                if ((neighbor is EmptyCell empty))
-                {
-                    if (empty.CellType == CellType.StartCell)//StartCell
-                    {
-                        continue; 
-                    }
-                    if (empty.CellType == CellType.EndCell)//StartCell
-                    {
-                        continue;
-                    }
-                    neighbor.SetMaterial(materials[1]);
-                }
-                /*else
-                {
-                    neighbor.SetMaterial(materials[1]);
-                }*/
+                continue;
             }
+           // if (empty.CellType == CellType.EndCell)
+           // {
+              //  neighbor.SetMaterial(materials[5]);
+               // continue;
+          //  } 
+            neighbor.SetMaterial(materials[1]);
         }
     }
 
+
     private void ActivateCellMaterial(BaseCell cellClicked)
     {
-        Material material;
+       /*Material material;
         if (cellClicked is EnemyCell enemy)
         {
             material = materials[3];
@@ -353,10 +328,10 @@ public class GameController : MonoBehaviour
             }
         }
         else
-        {
-            material = materials[4];
-        }
-        cellClicked.SetMaterial(material);
+        {*/
+          //  material = materials[4];
+        //}
+        cellClicked.SetMaterial(materials[4]);
     }
 
     private BaseCell OnCellActivated(BaseCell cellClicked, BaseCell PrevCell)
@@ -371,26 +346,27 @@ public class GameController : MonoBehaviour
         cellClicked.Open = true;
 
         //ActivateCellMaterial(cellClicked);
-
+        SetLockedMaterial(PrevCell, cellClicked);
         SetNeighbornsMaterial(cellClicked);
-
-        if (cellClicked is EmptyCell empty)
-        {
-            if (empty.CellType == CellType.StartCell)//StartCell
-            {
-                cellClicked.SetMaterial(materials[6]);
-            }
-            if (empty.CellType == CellType.EndCell)//EndCell
-            {
-                cellClicked.SetMaterial(materials[5]);
-            }
-        }
-        else
-        {
-            cellClicked.SetMaterial(materials[4]);
-        }
+       
        PrevCell = cellClicked;
        return PrevCell;
         //cellClicked.Activate();
+    }
+
+    private void SetLockedMaterial(BaseCell PrevCell, BaseCell cellClicked)
+    {
+        neighbors = GetAvailableCells(PrevCell);
+        foreach (var neighbor in neighbors)
+        {
+            var empty = (EmptyCell)neighbor;
+
+            if (neighbor.Open) continue;
+            if (empty.CellType==CellType.StartCell) continue;
+            if (neighbor == cellClicked) continue;
+
+            neighbor.SetMaterial(materials[0]);
+        }
+
     }
 }

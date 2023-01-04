@@ -14,15 +14,15 @@ public class EnemyDD : Enemy
         HitPoints = SetHitPoints();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     private int SetCriticalChanse()
     {
          return Random.Range(10, 100);
+    }
+
+    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked)
+    {
+        base.OnContentClicked(player, openEnemy, cellClicked);
     }
 
 }

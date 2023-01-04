@@ -28,4 +28,22 @@ public class Enemy : CellContent
     {
         return UnityEngine.Random.Range(5, 10 * 3);
     }
+
+    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked)
+    {
+
+        player.SetDamage(DmgPoints);
+
+        SetDamage(player.DmgPoints);
+
+        HitBar.ChangeHitBarFillAmount(HitPoints);
+        if (HitPoints <= 0)
+        {
+            Unsubscribe(cellClicked);
+            openEnemy.Remove(this);
+            Destroy(HitBar.gameObject);
+            Destroy(gameObject);
+        }
+
+    }
 }
