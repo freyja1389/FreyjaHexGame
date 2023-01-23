@@ -8,7 +8,7 @@ public class BonusDMGBooster : Bonus
     // Start is called before the first frame update
     void Start()
     {
-
+        BoostDMGPoints = SetBoostDMGPoints();
     }
 
     // Update is called once per frame

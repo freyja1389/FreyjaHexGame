@@ -70,7 +70,7 @@ public class GameController : MonoBehaviour
         filePath = Application.persistentDataPath + @"\ProgressData";
         LoadProgress();
         LvlInfo.text = "Lvl:" + playerProgress.Lvl;
-        UIController.ShowPlayerHP(player);
+        UpdatePlayerInformation();
         //HexCells = mGenerator.MapCreate1(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
         HexCells = mGenerator.MapGenerate(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
         neighbors = GetAvailableCells(mGenerator.StartCell);
@@ -149,17 +149,25 @@ public class GameController : MonoBehaviour
         }
     }
     
-    public void OnUseBonus(Bonus bonus)
+    public void OnUseBonus(Bonus bonus, ItemSlot button)
     {
         bonus.OnContentApplied(player, OpenEnemy);
-        UIController.ShowPlayerHP(player);
+        UpdatePlayerInformation();
+        button.UseBonus -= OnUseBonus;
+        UIController.RemoveBonusButton(button);
     }
-   
+
+    private void UpdatePlayerInformation()
+    {
+        UIController.ShowPlayerHP(player);
+        UIController.ShowPlayerDMG(player);
+    }
+
     private void MoveBonusIntoBonusCell(Bonus bonus, BaseCell cellClicked)
     {
-        player.SetBonusInBonusCell(bonus);
+        var BonusButton = UIController.RelocateBonusIntoBonusCell(bonus, player, cellClicked);
+        if (BonusButton == null) return;
         bonus.gameObject.SetActive(false);
-        var BonusButton = UIController.RelocateBonusIntoBonusCell(bonus, player);
         BonusButton.UseBonus += OnUseBonus;
         OnCellActivated(cellClicked, PrevCell);
     }

@@ -12,7 +12,8 @@ public class UIController : MonoBehaviour
 
     public Image PlayerHPBar;
     public Text PlayersHPTextBox;
-   
+    public Text PlayersDMGTextBox;
+
     public ItemSlot ButtonBonusDMGBooster;
     public ItemSlot ButtonBonusEnemyHPReducer;
     public ItemSlot ButtonBonusHealer;
@@ -39,10 +40,10 @@ public class UIController : MonoBehaviour
         enemyHitBar.fillAmount = (float)hp / 100;
     }
 
-    public ItemSlot RelocateBonusIntoBonusCell(Bonus bonus, Player player)
+    public ItemSlot RelocateBonusIntoBonusCell(Bonus bonus, Player player, BaseCell cellClicked)
     {
         ItemSlot inst = null;
-        if (player.Bonuses.Count < 3)
+        if (BonusButtons.Count < 3)
         {
             if (bonus is BonusHealer bonusHealer)
            {
@@ -57,6 +58,11 @@ public class UIController : MonoBehaviour
                 inst = Instantiate(ButtonBonusEnemyHPReducer);
            }
             SetBonusButtonSettings(inst, bonus);
+            AddBonusButton(inst);
+            var empty = (EmptyCell)cellClicked;
+            bonus.Unsubscribe(empty);
+            empty.ContentLink = null;
+            Destroy(bonus.gameObject);
         }
         return inst;
     }
@@ -68,10 +74,16 @@ public class UIController : MonoBehaviour
         inst.transform.localScale = new Vector3(1, 1, 1);
     }
 
+
     public void ShowPlayerHP(Player player)
     {
         PlayersHPTextBox.text = "Player's HP: " + player.HitPoints;
         PlayerHPBar.fillAmount = (float)player.HitPoints / 100;
+    }
+
+    public void ShowPlayerDMG(Player player)
+    {
+        PlayersDMGTextBox.text = "Player's DMG: " + player.DmgPoints;
     }
 
     public void ShowWinLooseInformation(string winLooseText)
@@ -81,6 +93,20 @@ public class UIController : MonoBehaviour
         instGameOverText.transform.SetParent(canv.transform, false);
         var text = instGameOverText.GetComponent<Text>();
         text.text = winLooseText;
+    }
+
+    private void AddBonusButton(ItemSlot bonusButton)
+    {
+        if (BonusButtons.Count < 3)
+        {
+            BonusButtons.Add(bonusButton);
+        }
+
+    }
+
+    public void RemoveBonusButton(ItemSlot button)
+    {
+        BonusButtons.Remove(button);          
     }
 
 }

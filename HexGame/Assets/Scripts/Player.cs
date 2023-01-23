@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     public List<Bonus> Bonuses;
 
     [SerializeField]
+    private UIController uicontroller;
+    [SerializeField]
     private int hitPoints;
 
     public void SetDamage(int value)
@@ -24,11 +26,11 @@ public class Player : MonoBehaviour
         DmgPoints += bonusDMG;
     }
 
-    public void SetBonusInBonusCell(Bonus bonus)
-    {
-        AddBonus(bonus);
+   // public void SetBonusInBonusCell(Bonus bonus)
+    //{
+      //  AddBonus(bonus);
 
-    }
+   // }
 
     public void SetHeal(int value)
     {
@@ -53,13 +55,13 @@ public class Player : MonoBehaviour
         StartCoroutine(MoveToTarget(vector));
     }
 
-    private void AddBonus(Bonus bonus)
+    /*private void AddBonus(Bonus bonus)
     {
         if (Bonuses.Count < 3)
         {
             Bonuses.Add(bonus);
         }
 
-    }
+    }*/
 
 }

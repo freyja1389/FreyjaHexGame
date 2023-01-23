@@ -27,13 +27,13 @@ public class MapGenerator:MonoBehaviour
     private int CheckTypeOfEnemy()
     {
         System.Random rnd = new System.Random();
-        return rnd.Next(1, 3); //1-DD, 2-Healer, 3-Tank
+        return rnd.Next(1, 4); //1-DD, 2-Healer, 3-Tank
     }
 
     private int CheckTypeOfBonus()
     {
         System.Random rnd = new System.Random();
-        return rnd.Next(4, 6); 
+        return rnd.Next(4, 7); 
     }
     
 

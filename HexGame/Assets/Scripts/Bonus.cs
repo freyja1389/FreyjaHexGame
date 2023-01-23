@@ -32,11 +32,11 @@ public class Bonus : CellContent
         // player.SetHeal(HealPoints);
         //if (!readyForApply)
         //{
-        Unsubscribe(cellClicked);
+        //Unsubscribe(cellClicked);
             // Destroy(gameObject); - не удаляем, а переносим в бонусы
            // player.SetBonusInBonusCell(this);
         MoveBonusIntoBonusCell?.Invoke(this, ParentCell);
-        cellClicked.ContentLink = null;
+        //cellClicked.ContentLink = null;
            // readyForApply = true; // bonus has been taken
         //} 
         //else

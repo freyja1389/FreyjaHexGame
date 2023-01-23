@@ -5,13 +5,13 @@ using System;
 
 public class ItemSlot : MonoBehaviour
 {
-    public event Action<Bonus> UseBonus;
+    public event Action<Bonus, ItemSlot> UseBonus;
     public Bonus BonusLink;
     // Start is called before the first frame update
 
     public void OnMouseUpAsButton()
     {
-        UseBonus.Invoke(BonusLink);
+        UseBonus.Invoke(BonusLink, this);
         Destroy(gameObject);
     }
 }

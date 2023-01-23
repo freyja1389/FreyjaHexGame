@@ -48,10 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CellIndex: {x: 0, y: 0}
   Open: 0
-  StartCell: 0
-  EndCell: 1
-  EnemyCell: 0
-  BonusCell: 0
+  CellType: 1
   Opened: 0
   ContentLink: {fileID: 0}
 --- !u!54 &515865402018471111
