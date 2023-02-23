@@ -29,19 +29,20 @@ public class EmptyCell : BaseCell
         RiseCellClicked();
     }
    
-    internal void ShowContent(Canvas wSCanvas)
+    internal void ShowContent(Canvas wSCanvas, UIController uIController)
     {
         switch (CellType)
         {
             case CellType.EnemyCell:
                 {
                     var enemy = Instantiate((Enemy)ContentPrefab, transform.position, transform.rotation, transform);
-                    UIController enemyBar = Instantiate(enemy.EnemyHitBarPref, new Vector3(transform.position.x, 1, transform.position.z), Quaternion.Euler(90, 0, 0), wSCanvas.transform);
+                   // UIController enemyBar = Instantiate(enemy.EnemyHitBarPref, new Vector3(transform.position.x, 1, transform.position.z), Quaternion.Euler(90, 0, 0), wSCanvas.transform);
                     ContentLink = enemy;
                     enemy.ContentClicked += OnCellClicked;
                     //OpenEnemy.Add(enemy);
-                    enemyBar.ChangeHitBarFillAmount(enemy.HitPoints);
-                    enemy.HitBar = enemyBar;           
+                    //enemyBar.ChangeHitBarFillAmount(enemy.HitPoints);
+                    // enemy.HitBar = enemyBar;
+                    uIController.ViewEnemyInformation(enemy, this, wSCanvas);
                 }
                 break;
             case CellType.BonusCell:

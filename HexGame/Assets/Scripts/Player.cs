@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Player : MonoBehaviour
 {
@@ -11,26 +12,119 @@ public class Player : MonoBehaviour
 
     public List<Bonus> Bonuses;
 
-    [SerializeField]
-    private UIController uicontroller;
+    public UIController UIController;
     [SerializeField]
     private int hitPoints;
+    private Animator anim;
+    private DamageSTM damageAnimSTM;
+    private AttackSTM attackAnimSTM;
 
-    public void SetDamage(int value)
+    public Enemy InteractionEnemyLink;
+
+    public event Action CheckEnemyDeath;
+
+   // public event Action AttackAnimationPlayedCountinue;
+    //public event Action DamageAnimationPlayedCountinue;
+
+
+    public void Update()
+    {
+////        if (anim.GetCurrentAnimatorClipInfo(0)[0].clip.name == "Attack" && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+       // {
+            
+           // AttackAnimationPlayedCountinue?.Invoke();
+        //}
+
+       // if (anim.GetCurrentAnimatorClipInfo(0)[0].clip.name == "Damage_00" && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+       // {
+        //   // DamageAnimationPlayedCountinue?.Invoke();
+       // }
+
+        //return;
+    }
+
+    public void Start()
+    {
+        
+        //damageAnimSTM = anim.GetBehaviour<DamageSTM>();
+       // damageAnimSTM.DamageAnimationComplete += SetDamageWithAnimation;
+
+    }
+    public void Awake()
+    {
+
+        InteractionEnemyLink = null;
+        SetHitDamagePoints();
+        anim = gameObject.GetComponentInChildren<Animator>();
+        attackAnimSTM = anim.GetBehaviour<AttackSTM>();
+        attackAnimSTM.AttackAnimationComplete += AttackCompleated;
+
+    }
+    
+    private void SetHitDamagePoints()
+    {
+        hitPoints = 100;
+        DmgPoints = 40;
+    }
+
+    public void SetAttackAnimation()
+    {
+        anim.SetTrigger("Attack");
+       // this.AttackAnimationPlayedCountinue += this.SetDamageWithAnimation;
+    }
+
+    public void SetPlayerinteractionEnemyLink(Enemy enemy)
+    {
+        if (InteractionEnemyLink == null)  
+        {
+            InteractionEnemyLink = enemy;
+        }
+    }
+
+    public void AttackCompleated()
+    {
+        CheckEnemyDeath?.Invoke();
+    }
+
+
+    public void SetDamageWithAnimation(int dmgPoints)
+    {
+        // yield return new WaitForSeconds(2);
+        //new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).normalizedTime);
+        
+            if (dmgPoints > 0)
+            {
+                SetDamageAnim();
+                SetDamage(dmgPoints);
+                // this.AttackAnimationPlayedCountinue -= this.SetDamageWithAnimation;
+            
+                UIController.ShowPlayerHP(this);
+                //DamageAnimationPlayedCountinue?.Invoke();
+            }
+        
+    }
+
+    private void SetDamageAnim()
+    {
+        anim.SetTrigger("Damage");
+    }
+    private void SetDamage(int value)
     {
         hitPoints = Mathf.Clamp(hitPoints - value, 0, 100);
-    }
+    }    
 
     public void IncreaseDamage(int bonusDMG)
     {
         DmgPoints += bonusDMG;
     }
 
-   // public void SetBonusInBonusCell(Bonus bonus)
-    //{
-      //  AddBonus(bonus);
+    
 
-   // }
+    // public void SetBonusInBonusCell(Bonus bonus)
+    //{
+    //  AddBonus(bonus);
+
+    // }
 
     public void SetHeal(int value)
     {
@@ -46,8 +140,16 @@ public class Player : MonoBehaviour
 
     private IEnumerator MoveToTarget(Vector3 vector)
     {
-        PlayerInstance.transform.position =  Vector3.Lerp(PlayerInstance.transform.position, vector, 2);
-        yield return null;
+        Animator anim = gameObject.GetComponentInChildren<Animator>();
+        float timeCounter = 0;
+       anim.SetTrigger("Walk");
+        while (timeCounter < 1)
+        {
+            timeCounter = timeCounter + Time.deltaTime;
+            PlayerInstance.transform.position = Vector3.Lerp(PlayerInstance.transform.position, vector, timeCounter);
+            yield return null;
+        }
+       anim.SetTrigger("Idle");
     }
     
     public void Relocation(Vector3 vector)
@@ -55,13 +157,10 @@ public class Player : MonoBehaviour
         StartCoroutine(MoveToTarget(vector));
     }
 
-    /*private void AddBonus(Bonus bonus)
+    public void UnsubscribePlayerAnimationEvents()
     {
-        if (Bonuses.Count < 3)
-        {
-            Bonuses.Add(bonus);
-        }
+        //attackAnimSTM.AttackAnimationComplete -= SetDamageWithAnimation;
+        //damageAnimSTM.DamageAnimationComplete -= SetDamageWithAnimation;
 
-    }*/
-
+    }
 }

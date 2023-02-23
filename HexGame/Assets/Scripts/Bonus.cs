@@ -11,8 +11,10 @@ public class Bonus : CellContent
     public event Action<Bonus, BaseCell> MoveBonusIntoBonusCell;
     public Vector2Int CellIndex;
     public bool Open;
-    private bool readyForApply;
+   // private bool readyForApply;
     public BaseCell ParentCell;
+
+ 
 
     // Start is called before the first frame update
     void Start()

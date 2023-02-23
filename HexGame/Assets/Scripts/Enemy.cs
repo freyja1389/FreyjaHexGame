@@ -10,7 +10,13 @@ public class Enemy : CellContent
     public int DmgPoints;
     public int HitPoints;
     public  UIController HitBar;
-   public UIController EnemyHitBarPref;
+    public Text EnemyInfo;
+    public UIController EnemyHitBarPref;
+    private EmptyCell currentcellClicked;
+    public event Action<int> EnemyAlive;
+    
+
+    //public Action <CellContent> ReadyForDestroy;
     // Start is called before the first frame update
   
     public int SetDamage(int dmg)
@@ -31,19 +37,33 @@ public class Enemy : CellContent
 
     public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked)
     {
+        currentcellClicked = cellClicked;
+        player.SetAttackAnimation();
 
-        player.SetDamage(DmgPoints);
 
+       player.SetPlayerinteractionEnemyLink(this);
         SetDamage(player.DmgPoints);
-
         HitBar.ChangeHitBarFillAmount(HitPoints);
+    }
+
+    public override void CheckEnemyDeath()
+    {
+        //player.SetPlayerDamage(DmgPoints);
         if (HitPoints <= 0)
         {
-            Unsubscribe(cellClicked);
-            openEnemy.Remove(this);
-            Destroy(HitBar.gameObject);
-            Destroy(gameObject);
+            base.RiseReadyForDestroy((CellContent)this);
         }
+        else
+        {
+            EnemyAlive?.Invoke(DmgPoints);
+        }
+    }
 
+    public override void SelfDestroy()
+    {
+        Unsubscribe(currentcellClicked);
+        Destroy(HitBar.gameObject);
+        Destroy(gameObject);
+        Destroy(EnemyInfo.gameObject);
     }
 }

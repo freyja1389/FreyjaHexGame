@@ -9,6 +9,10 @@ public class UIController : MonoBehaviour
     private Image enemyHitBar;
     [SerializeField]
     private GameObject GameOverTextBar;
+    [SerializeField]
+    private Text UnitType;
+    [SerializeField]
+    private Text EnemyInfoPref;
 
     public Image PlayerHPBar;
     public Text PlayersHPTextBox;
@@ -107,6 +111,17 @@ public class UIController : MonoBehaviour
     public void RemoveBonusButton(ItemSlot button)
     {
         BonusButtons.Remove(button);          
+    }
+
+    public void ViewEnemyInformation(Enemy enemy, EmptyCell cell, Canvas wSCanvas)
+    {
+        UIController enemyBar = Instantiate(enemy.EnemyHitBarPref, new Vector3(cell.transform.position.x, 1, cell.transform.position.z), Quaternion.Euler(90, 0, 0), wSCanvas.transform);
+        enemyBar.ChangeHitBarFillAmount(enemy.HitPoints);
+        enemy.HitBar = enemyBar;
+
+        Text EnemyInfo = Instantiate(EnemyInfoPref, new Vector3(cell.transform.position.x, 1, cell.transform.position.z+0.3f), Quaternion.Euler(90, 0, 0), wSCanvas.transform);
+        EnemyInfo.text = "HP: " + enemy.HitPoints + "\n DMG: " + enemy.DmgPoints;
+        enemy.EnemyInfo = EnemyInfo;
     }
 
 }

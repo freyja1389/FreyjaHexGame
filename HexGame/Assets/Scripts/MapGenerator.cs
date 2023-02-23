@@ -279,8 +279,11 @@ public class MapGenerator:MonoBehaviour
         {
             ((EmptyCell)StartCell).CellType = CellType.StartCell;          
             var playerInst = Instantiate(PlayerPrefab, cell.transform.position, transform.rotation);
-            player.PlayerInstance = playerInst;
+
+            gController.player = playerInst.GetComponent<Player>();
+            gController.player.PlayerInstance = playerInst;
             StartCell = cell;
+           
         }
         else if (cellType == EndCell)
         {

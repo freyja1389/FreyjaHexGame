@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour
     //hitbar +
     //win logic
     public int Columns = 0;
+    public StateMachineBehaviour AnimAttack;
     //public Text PlayersHPTextBox;
     //public List<BaseCell> HexCells;
     public BaseCell[,] HexCells;
@@ -25,11 +26,10 @@ public class GameController : MonoBehaviour
     public Canvas WSCanvas;
     public Canvas UICanvas;
     public UIController UIController;
+    public Player player;
 
     [SerializeField]
     private MapGenerator mGenerator;
-    [SerializeField]
-    private Player player;
     [SerializeField]
     private Material[] materials;
     [SerializeField]
@@ -41,6 +41,9 @@ public class GameController : MonoBehaviour
     private string filePath;
     private BaseCell PrevCell;
     public List<Enemy> OpenEnemy;
+    public DamageSTM damageAnimSTM;
+
+
 
 
 
@@ -70,7 +73,7 @@ public class GameController : MonoBehaviour
         filePath = Application.persistentDataPath + @"\ProgressData";
         LoadProgress();
         LvlInfo.text = "Lvl:" + playerProgress.Lvl;
-        UpdatePlayerInformation();
+
         //HexCells = mGenerator.MapCreate1(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
         HexCells = mGenerator.MapGenerate(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
         neighbors = GetAvailableCells(mGenerator.StartCell);
@@ -83,8 +86,12 @@ public class GameController : MonoBehaviour
             neighbor.SetMaterial(materials[1]);
         }
 
+        UpdatePlayerInformation();
         player.RelocateInstantly(mGenerator.StartCell.transform.position);
         playerPositionInMap = mGenerator.StartCell.CellIndex;
+
+        var animPlayer = player.GetComponentInChildren<Animator>();
+        damageAnimSTM = animPlayer.GetBehaviour<DamageSTM>();
 
         foreach (var cell in HexCells)
         {
@@ -101,15 +108,33 @@ public class GameController : MonoBehaviour
     public void cellUsed(EmptyCell cellClicked)
     {  
         var content = cellClicked.ContentLink;
+
         content.OnContentClicked(player, OpenEnemy, cellClicked);
 
-        UIController.ShowPlayerHP(player);
         CheckPlayerDeath();
 
         if (cellClicked.gameObject == null)
         {
             PrevCell = OnCellActivated(cellClicked, PrevCell);
         }
+    }
+
+ 
+
+    private void DestroyCellContent(CellContent cellContent)
+    {
+
+        if (cellContent is Enemy enemy)
+        {
+            OpenEnemy.Remove(enemy);
+            damageAnimSTM.DamageAnimationComplete -= enemy.CheckEnemyDeath;
+            player.CheckEnemyDeath -= enemy.CheckEnemyDeath;
+            enemy.EnemyAlive -= player.SetDamageWithAnimation;
+        }
+ 
+        player.UnsubscribePlayerAnimationEvents();
+
+        cellContent.SelfDestroy();
     }
 
     public void GetHealToOpenEnemies(int healpoints)
@@ -161,6 +186,7 @@ public class GameController : MonoBehaviour
     {
         UIController.ShowPlayerHP(player);
         UIController.ShowPlayerDMG(player);
+        player.UIController = UIController;
     }
 
     private void MoveBonusIntoBonusCell(Bonus bonus, BaseCell cellClicked)
@@ -175,18 +201,28 @@ public class GameController : MonoBehaviour
     {
         if (!IsNeighbor(cellClicked)) return;
 
+        player.transform.LookAt(cellClicked.transform.position);
+
+
         var emptyCell = (EmptyCell)cellClicked;
 
         if (!emptyCell.Opened)
         {
             emptyCell.ShownContent += OnContentShown;
-            emptyCell.ShowContent(WSCanvas);
+            emptyCell.ShowContent(WSCanvas, UIController);
             emptyCell.ShownContent -= OnContentShown;
             emptyCell.Opened = true;
             if (emptyCell.ContentLink  is Bonus bonus)
             {
                 bonus.ParentCell = cellClicked;
                 bonus.MoveBonusIntoBonusCell += MoveBonusIntoBonusCell;
+            }
+            else if (emptyCell.ContentLink is Enemy enemy)
+            {
+               // damageAnimSTM.DamageAnimationComplete += enemy.CheckEnemyDeath;
+                enemy.ReadyForDestroy += DestroyCellContent;
+                player.CheckEnemyDeath += enemy.CheckEnemyDeath;
+                enemy.EnemyAlive += player.SetDamageWithAnimation;
             }
             if (!(emptyCell.ContentLink == null))
             {

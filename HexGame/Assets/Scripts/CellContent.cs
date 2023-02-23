@@ -6,10 +6,16 @@ using UnityEngine;
 public class CellContent : MonoBehaviour
 {
     public event Action ContentClicked;
+    public  event Action <CellContent> ReadyForDestroy;
     // Start is called before the first frame update
     void Start()
     {
         
+    }
+
+    protected void RiseReadyForDestroy(CellContent contentCell)
+    {
+        ReadyForDestroy?.Invoke(contentCell);
     }
 
     protected virtual void OnMouseUpAsButton()
@@ -17,7 +23,7 @@ public class CellContent : MonoBehaviour
         ContentClicked?.Invoke();
     }
 
-    // Update is called once per frame
+    // Update is called once per fram
     void Update()
     {
         
@@ -40,6 +46,15 @@ public class CellContent : MonoBehaviour
     public virtual void OnContentApplied(Player player, List<Enemy> openEnemy)
     {
         return;
+    }
+    public virtual void SelfDestroy()
+    {
+
+    }
+
+    public virtual void CheckEnemyDeath()
+    {
+
     }
 }
  
