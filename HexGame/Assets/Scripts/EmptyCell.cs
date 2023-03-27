@@ -40,7 +40,7 @@ public class EmptyCell : BaseCell
                     ContentLink = enemy;
                     enemy.ContentClicked += OnCellClicked;
                     //OpenEnemy.Add(enemy);
-                    //enemyBar.ChangeHitBarFillAmount(enemy.HitPoints);
+                    //enemyBar.ChangeEnemyHitBarFillAmount(enemy.HitPoints);
                     // enemy.HitBar = enemyBar;
                     uIController.ViewEnemyInformation(enemy, this, wSCanvas);
                 }

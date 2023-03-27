@@ -34,7 +34,7 @@ public class EnemyHealer : Enemy
         foreach (Enemy enemy in openEnemy)
         {
             enemy.HitPoints += healpoints;
-            enemy.HitBar.ChangeHitBarFillAmount(enemy.HitPoints);
+            enemy.HitBar.ChangeEnemyHitBarFillAmount(enemy.HitPoints);
         }
     }
 

@@ -78,7 +78,7 @@ public class Enemy : CellContent
        player.SetPlayerinteractionEnemyLink(this);
         SetDamageAnimation();
         SetDamage(player.DmgPoints);
-        HitBar.ChangeHitBarFillAmount(HitPoints);
+        HitBar.ChangeEnemyHitBarFillAmount(HitPoints);
     }
 
     public override void CheckEnemyDeath(Animator animator)

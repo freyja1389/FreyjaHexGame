@@ -178,8 +178,19 @@ public class GameController : MonoBehaviour
     {
         bonus.OnContentApplied(player, OpenEnemy);
         UpdatePlayerInformation();
+        UpdateOpenEnemyInformation();
         button.UseBonus -= OnUseBonus;
         UIController.RemoveBonusButton(button);
+    }
+
+    public void UpdateOpenEnemyInformation()
+    {
+        foreach (Enemy enem in  OpenEnemy)
+        {
+              enem.HitBar.ChangeEnemyHitBarFillAmount(enem.HitPoints);
+              UIController.UpdateEnemyTextInfo(enem);
+        }
+
     }
 
     private void UpdatePlayerInformation()
