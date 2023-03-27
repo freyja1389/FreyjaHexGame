@@ -52,7 +52,7 @@ public class CellContent : MonoBehaviour
 
     }
 
-    public virtual void CheckEnemyDeath()
+    public virtual void CheckEnemyDeath(Animator animator)
     {
 
     }

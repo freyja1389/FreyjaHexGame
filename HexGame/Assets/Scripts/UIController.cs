@@ -26,6 +26,8 @@ public class UIController : MonoBehaviour
 
     public List<ItemSlot> BonusButtons;
 
+    public MenuControls MenuControls;
+
 
     // Start is called before the first frame update
     void Start()
@@ -122,6 +124,11 @@ public class UIController : MonoBehaviour
         Text EnemyInfo = Instantiate(EnemyInfoPref, new Vector3(cell.transform.position.x, 1, cell.transform.position.z+0.3f), Quaternion.Euler(90, 0, 0), wSCanvas.transform);
         EnemyInfo.text = "HP: " + enemy.HitPoints + "\n DMG: " + enemy.DmgPoints;
         enemy.EnemyInfo = EnemyInfo;
+    }
+
+    public void NextLevelMenuSpawn()
+    {
+        MenuControls.NextLevelMenuPanel.SetActive(true);
     }
 
 }

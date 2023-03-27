@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
 
     public Enemy InteractionEnemyLink;
 
-    public event Action CheckEnemyDeath;
+    public event Action <Animator> CheckEnemyDeath;
 
    // public event Action AttackAnimationPlayedCountinue;
     //public event Action DamageAnimationPlayedCountinue;
@@ -81,9 +81,10 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void AttackCompleated()
+    public void AttackCompleated(Animator animator)
     {
-        CheckEnemyDeath?.Invoke();
+        if (!animator == anim) return;
+        CheckEnemyDeath?.Invoke(null);
     }
 
 

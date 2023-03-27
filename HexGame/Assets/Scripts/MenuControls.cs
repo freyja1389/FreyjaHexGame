@@ -8,6 +8,7 @@ using UnityEngine.Audio;
 public class MenuControls : MonoBehaviour
 {
     public GameObject MenuPanel;
+    public GameObject NextLevelMenuPanel;
     public GameObject SettingsPanel;
     public bool isFullScreen;
     public AudioMixer Audio;
@@ -27,6 +28,12 @@ public class MenuControls : MonoBehaviour
         sorceAud.clip = muz2;
         sorceAud.Play();
         StartClicked?.Invoke();
+    }
+
+    public void PressedNextLevel()
+    {
+        StartClicked?.Invoke();
+        NextLevelMenuPanel.SetActive(false);
     }
 
     public void PressedSettings()

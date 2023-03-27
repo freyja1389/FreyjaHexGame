@@ -129,7 +129,7 @@ public class GameController : MonoBehaviour
             OpenEnemy.Remove(enemy);
             damageAnimSTM.DamageAnimationComplete -= enemy.CheckEnemyDeath;
             player.CheckEnemyDeath -= enemy.CheckEnemyDeath;
-            enemy.EnemyAlive -= player.SetDamageWithAnimation;
+           // enemy.EnemyAlive -= player.SetDamageWithAnimation;
         }
  
         player.UnsubscribePlayerAnimationEvents();
@@ -222,7 +222,8 @@ public class GameController : MonoBehaviour
                // damageAnimSTM.DamageAnimationComplete += enemy.CheckEnemyDeath;
                 enemy.ReadyForDestroy += DestroyCellContent;
                 player.CheckEnemyDeath += enemy.CheckEnemyDeath;
-                enemy.EnemyAlive += player.SetDamageWithAnimation;
+               //enemy.EnemyAlive += player.SetDamageWithAnimation;
+                enemy.EnemyAttackStarted += player.SetDamageWithAnimation;
             }
             if (!(emptyCell.ContentLink == null))
             {
@@ -241,6 +242,7 @@ public class GameController : MonoBehaviour
                 UIController.ShowPlayerHP(player);
                 var text = "You Win!";
                 UIController.ShowWinLooseInformation(text);
+                UIController.NextLevelMenuSpawn();
 
             }
                 PrevCell = OnCellActivated(cellClicked, PrevCell);
@@ -254,6 +256,11 @@ public class GameController : MonoBehaviour
         {
             enemy.OnAnyCellClicked(OpenEnemy);
         }
+    }
+
+    private void OnNextLevelClick()
+    {
+
     }
 
     public void OnStartClicked()
