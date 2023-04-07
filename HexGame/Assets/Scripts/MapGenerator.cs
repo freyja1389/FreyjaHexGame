@@ -73,7 +73,7 @@ public class MapGenerator:MonoBehaviour
     }
   
 
-    List<Vector2Int> GetALLNeighbours(Vector2Int vect, List<Vector2Int> missingCellCoordinates)
+    List<Vector2Int> GetALLNeighbours(Vector2Int vect, List<Vector2Int> missingCellCoordinates, int rows, int columns)
     {
         List<Vector2Int>  nList = new List<Vector2Int>();
         if (vect.y % 2 == 0)
@@ -90,16 +90,25 @@ public class MapGenerator:MonoBehaviour
             {
                 if (!missingCellCoordinates.Contains(new Vector2Int(vect.x - 1, vect.y + 1)))
                 {
-                    nList.Add(new Vector2Int(vect.x - 1, vect.y + 1));
+                    if (vect.y + 1 < columns)
+                    {
+                        nList.Add(new Vector2Int(vect.x - 1, vect.y + 1));
+                    }
                 }
             }
             if (!missingCellCoordinates.Contains(new Vector2Int(vect.x, vect.y + 1)))
+            {
+                if (vect.y + 1 < columns)
                 {
-                nList.Add(new Vector2Int(vect.x, vect.y + 1));
+                    nList.Add(new Vector2Int(vect.x, vect.y + 1));
+                }
             }
             if (!missingCellCoordinates.Contains(new Vector2Int(vect.x + 1, vect.y)))
+            {
+                if (vect.x + 1 < rows)
                 {
-                nList.Add(new Vector2Int(vect.x + 1, vect.y));
+                    nList.Add(new Vector2Int(vect.x + 1, vect.y));
+                }
             }
             if (!((vect.y - 1) < 0))
             {
@@ -122,21 +131,33 @@ public class MapGenerator:MonoBehaviour
             nList.Clear();
             if (!missingCellCoordinates.Contains(new Vector2Int(vect.x, vect.y + 1)))
             {
-                nList.Add(new Vector2Int(vect.x, vect.y + 1));
+                if (vect.y + 1 < columns)
+                {
+                    nList.Add(new Vector2Int(vect.x, vect.y + 1));
+                }
             }
             if (!missingCellCoordinates.Contains(new Vector2Int(vect.x + 1, vect.y + 1)))
             {
-                nList.Add(new Vector2Int(vect.x + 1, vect.y + 1));
+                if (vect.y + 1 < columns && vect.x + 1 < rows)
+                {
+                    nList.Add(new Vector2Int(vect.x + 1, vect.y + 1));
+                }
             }
             if (!missingCellCoordinates.Contains(new Vector2Int(vect.x + 1, vect.y)))
             {
-                nList.Add(new Vector2Int(vect.x + 1, vect.y));
+                if (vect.x + 1 < rows)
+                {
+                    nList.Add(new Vector2Int(vect.x + 1, vect.y));
+                }
             }
             if (!((vect.y - 1) < 0))
             {
                 if (!missingCellCoordinates.Contains(new Vector2Int(vect.x + 1, vect.y - 1)))
                 {
-                    nList.Add(new Vector2Int(vect.x + 1, vect.y - 1));
+                    if (vect.x + 1 < rows)
+                    {
+                        nList.Add(new Vector2Int(vect.x + 1, vect.y - 1));
+                    }
                 }
             }
             if (!((vect.y - 1) < 0))
@@ -157,9 +178,9 @@ public class MapGenerator:MonoBehaviour
         return nList;
     }
 
-    List<Vector2Int> GetALLSpawnedNeighbours(Vector2Int vect, List<Vector2Int> missingCellCoordinates, List<Vector2Int> map, List<Vector2Int>deleted)
+    List<Vector2Int> GetALLSpawnedNeighbours(Vector2Int vect, List<Vector2Int> missingCellCoordinates, List<Vector2Int> map, List<Vector2Int>deleted, int rows, int columns)
     {
-        var checkNeighbors = GetALLNeighbours(vect, missingCellCoordinates);
+        var checkNeighbors = GetALLNeighbours(vect, missingCellCoordinates, rows, columns);
         var spawnedNeighbours = new List<Vector2Int>();
 
                 foreach (var neighbour in checkNeighbors)
@@ -205,14 +226,14 @@ public class MapGenerator:MonoBehaviour
         var neighbourCoords = new List<Vector2Int>() { startPoint };
         var lenght = rows * columns;
         var missingCellCoordinates = new List<Vector2Int>();
-        int startCellIndex = TakeRandomIntOfRange(0, lenght - 1);
-        int endCellIndex = TakeRandomIntOfRange(0, lenght - 1, startCellIndex);
-        Debug.Log($"start: {startCellIndex.ToString()} end: {endCellIndex.ToString()}");
+       // int startCellIndex = TakeRandomIntOfRange(0, lenght - 1);
+       // int endCellIndex = TakeRandomIntOfRange(0, lenght - 1, startCellIndex);
+      //  Debug.Log($"start: {startCellIndex.ToString()} end: {endCellIndex.ToString()}");
 
         for (int i = 0; i < neighbourCoords.Count; i++)
         {
             var coord = neighbourCoords[i];
-            var innerNeighbourCoords = GetALLNeighbours(coord, missingCellCoordinates);// GetNeighboursCoords(coord, rows, columns); 
+            var innerNeighbourCoords = GetALLNeighbours(coord, missingCellCoordinates, rows, columns);// GetNeighboursCoords(coord, rows, columns); 
             /*foreach (var item in innerNeighbourCoords)
             {
                 if (item.x >= rows || item.y >= columns)
@@ -222,7 +243,7 @@ public class MapGenerator:MonoBehaviour
   
                 neighbourCoords.Add(item);       
             }*/
-            if (startCellIndex == i)
+           /* if (startCellIndex == i)
             {
                 cellType = StartCell;
             }
@@ -231,9 +252,9 @@ public class MapGenerator:MonoBehaviour
                 cellType = EndCell;
             }
             else
-            {
+            {*/
                 cellType = GetCellType(coord, missingCellCoordinates, innerNeighbourCoords);
-            }
+           // }
 
             if (cellType is MissingCell)
             {
@@ -246,6 +267,10 @@ public class MapGenerator:MonoBehaviour
                 { 
                     continue;
                 }*/
+                if (i > 1)
+                {
+                    if (CheckIsSeparateCell(map, missingCellCoordinates, coord, rows, columns)) continue; // if cell haven't neighbours - we dont create it
+                }
                 var currentCell = CreateCell(coord, cellType, player);
                 currentCell.CellIndex = new Vector2Int(coord.x, coord.y);
                 CheckContent((EmptyCell)currentCell);
@@ -263,8 +288,58 @@ public class MapGenerator:MonoBehaviour
             }
             //}
         }
+
+        SetStartEndCell(map, player);
+        //CheckSeparateCells(map, missingCellCoordinates, rows, columns);
         return map;
     }
+
+
+    private void SetStartEndCell(BaseCell[,] map,  Player player)
+    {
+        var startElem = GetRandomElementOfMap(map);
+
+        for (int i = 0; i < map.GetLength(0) * map.GetLength(1); i++)
+        {
+            if (!(startElem == null)) break;
+
+            startElem = GetRandomElementOfMap(map);
+        }
+        var endElem = GetRandomElementOfMap(map);
+
+        for (int i = 0; i < map.GetLength(0) * map.GetLength(1); i++)
+        {
+            if (!(endElem == null)) break;
+
+                endElem = GetRandomElementOfMap(map);
+        }
+
+         ((EmptyCell)startElem).CellType = CellType.StartCell;
+        if (gController.player == null)
+        {
+            var playerInst = Instantiate(PlayerPrefab, startElem.transform.position, transform.rotation);
+
+            gController.player = playerInst.GetComponent<Player>();
+            gController.player.PlayerInstance = playerInst;
+        }
+        else
+        {
+            gController.player.transform.position = startElem.transform.position;
+
+        }
+
+        StartCell = startElem;
+
+        ((EmptyCell)endElem).CellType = CellType.EndCell;
+        EndCell = endElem;
+    }
+
+    private BaseCell GetRandomElementOfMap(BaseCell[,] map)
+    {
+        var rand = new System.Random();
+        return map[rand.Next(0, map.GetLength(0)), rand.Next(0, map.GetLength(1))]; 
+    }
+
 
     private BaseCell CreateCell(Vector2Int coords, BaseCell cellType, Player player)
     {
@@ -275,7 +350,7 @@ public class MapGenerator:MonoBehaviour
         cell.name = cell.name + cell.CellIndex.ToString();
         HexCells.Add(cell);
 
-        if (cellType == StartCell)
+        /*if (cellType == StartCell)
         {
             ((EmptyCell)StartCell).CellType = CellType.StartCell;          
             var playerInst = Instantiate(PlayerPrefab, cell.transform.position, transform.rotation);
@@ -294,18 +369,34 @@ public class MapGenerator:MonoBehaviour
             EndCell = cell;
         }
         else
-        {
+        {*/
             ((EmptyCell)cell).CellType = CellType.EmptyCell; 
-        }
+       // }
         return cell;
     }
 
+    private bool CheckIsSeparateCell(BaseCell[,] map, List<Vector2Int> missingCellCoordinates, Vector2Int coord, int rows, int columns)
+    {
+        var existingneighbours = new List<Vector2Int>();
+        var neighbours = GetALLNeighbours(coord, missingCellCoordinates, rows, columns);
+        foreach (Vector2Int neighbour in neighbours)
+        {
+            if (!(map[neighbour.x, neighbour.y] == null))
+            {
+                existingneighbours.Add(neighbour);
+            }
+        }
+        if (existingneighbours.Count > 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 
 
-    //private List<Vector2Int> GetNeighboursCoords(Vector2Int currentPos, int rows, int columns)
-    //{
-        //return GetALLNeighbours(currentPos);
-   // }
     private BaseCell GetCellType(Vector2Int startCoords, List<Vector2Int> missingCellCoordinates, List<Vector2Int> innerNeighbourCoords)
     {
         var randomList = new List<BaseCell>(hexCellPrefabs);
@@ -315,10 +406,6 @@ public class MapGenerator:MonoBehaviour
 
     private BaseCell CheckCellType(Vector2Int startCoords, List<Vector2Int> missingCellCoordinates, BaseCell cellType, List<Vector2Int> innerNeighbourCoords)
     {
-        if (startCoords.x == 0 | startCoords.y == 0) //если крайние гексы
-        {
-            return hexCellPrefabs[0];
-        }
         //check the existing neighbors 
         if (startCoords.y % 2 == 0) //even
         {
@@ -334,7 +421,6 @@ public class MapGenerator:MonoBehaviour
             {
                 cellType = hexCellPrefabs[0];
             }
-            ///}
         }
         return cellType;
     }

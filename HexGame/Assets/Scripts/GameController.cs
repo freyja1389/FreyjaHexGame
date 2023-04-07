@@ -18,7 +18,7 @@ public class GameController : MonoBehaviour
     //public List<BaseCell> HexCells;
     public BaseCell[,] HexCells;
     public int Rows = 0;
-   // public Image Bar;
+    // public Image Bar;
     public GameObject MenuPanel;
     public MenuControls Menu;
     public Text LvlInfo;
@@ -70,21 +70,47 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
+        Menu.StartClicked += OnStartClicked;
+    }
+
+    private void StartLevel()
+    {
+        //clear the map
+        if (!(HexCells == null))
+        {
+            foreach (var cell in HexCells)
+            {
+                if (!(cell == null))
+                {
+                    cell.CellClicked -= OnCellClicked;
+                }
+            }
+        }
+
+        var childcount = mGenerator.transform.childCount;
+        if (childcount > 0)
+        {
+            for (int i = 0; i < childcount; i++)
+            {
+                Destroy(mGenerator.transform.GetChild(i).gameObject);
+            }
+
+        }
+        
+        ////////////////////
         filePath = Application.persistentDataPath + @"\ProgressData";
         LoadProgress();
         LvlInfo.text = "Lvl:" + playerProgress.Lvl;
 
         //HexCells = mGenerator.MapCreate1(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
         HexCells = mGenerator.MapGenerate(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
+        mGenerator.StartCell.SetMaterial(materials[6]);
         neighbors = GetAvailableCells(mGenerator.StartCell);
         foreach (var neighbor in neighbors)
         {
-            /* if (neighbor is EmptyCell empty && empty.CellType == EmptyCell.CellTypes.StartCell)
-            {
-                continue; 
-            }*/
-            neighbor.SetMaterial(materials[1]);
+                neighbor.SetMaterial(materials[1]);
         }
+
 
         UpdatePlayerInformation();
         player.RelocateInstantly(mGenerator.StartCell.transform.position);
@@ -100,7 +126,7 @@ public class GameController : MonoBehaviour
                 cell.CellClicked += OnCellClicked;
             }
         }
-        Menu.StartClicked += OnStartClicked;
+       
 
         PrevCell = mGenerator.StartCell;
     }
@@ -208,8 +234,11 @@ public class GameController : MonoBehaviour
         BonusButton.UseBonus += OnUseBonus;
         OnCellActivated(cellClicked, PrevCell);
     }
+
     public void OnCellClicked(BaseCell cellClicked)
     {
+        if (!player.PlayerCanAction()) return;
+
         if (!IsNeighbor(cellClicked)) return;
 
         player.transform.LookAt(cellClicked.transform.position);
@@ -269,14 +298,12 @@ public class GameController : MonoBehaviour
         }
     }
 
-    private void OnNextLevelClick()
-    {
-
-    }
+   
 
     public void OnStartClicked()
     {
         MenuPanel.SetActive(false);
+        StartLevel();
     }
 
     private void SaveProgress()

@@ -99,7 +99,7 @@ public class UIController : MonoBehaviour
 
     public void ShowWinLooseInformation(string winLooseText)
     {
-        var instGameOverText = Instantiate(GameOverTextBar, new Vector3(0, 0, 0), Quaternion.identity);
+        var instGameOverText = Instantiate(GameOverTextBar, new Vector3(0, 184, 0), Quaternion.identity);
         var canv = GameObject.FindGameObjectWithTag("MainCanvas");
         instGameOverText.transform.SetParent(canv.transform, false);
         var text = instGameOverText.GetComponent<Text>();

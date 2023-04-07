@@ -43,6 +43,19 @@ public class Player : MonoBehaviour
         //return;
     }
 
+    public bool PlayerCanAction()
+    {
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+        {
+            return true;
+        }
+        else 
+        {
+            return false;
+        }
+
+    }
+
     public void Start()
     {
         
