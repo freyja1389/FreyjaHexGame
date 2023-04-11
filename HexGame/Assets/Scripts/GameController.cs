@@ -102,6 +102,8 @@ public class GameController : MonoBehaviour
         LoadProgress();
         LvlInfo.text = "Lvl:" + playerProgress.Lvl;
 
+        UIController.DeActivateGameOverTextBar();
+
         //HexCells = mGenerator.MapCreate1(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
         HexCells = mGenerator.MapGenerate(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
         mGenerator.StartCell.SetMaterial(materials[6]);
@@ -111,8 +113,8 @@ public class GameController : MonoBehaviour
                 neighbor.SetMaterial(materials[1]);
         }
 
-
         UpdatePlayerInformation();
+
         player.RelocateInstantly(mGenerator.StartCell.transform.position);
         playerPositionInMap = mGenerator.StartCell.CellIndex;
 

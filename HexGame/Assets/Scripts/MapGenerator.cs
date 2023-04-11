@@ -309,7 +309,7 @@ public class MapGenerator:MonoBehaviour
 
         for (int i = 0; i < map.GetLength(0) * map.GetLength(1); i++)
         {
-            if (!(endElem == null)) break;
+            if (!(endElem == null) & !(endElem == startElem)) break;
 
                 endElem = GetRandomElementOfMap(map);
         }
@@ -329,9 +329,11 @@ public class MapGenerator:MonoBehaviour
         }
 
         StartCell = startElem;
+        startElem.name = "StartCell" + startElem.CellIndex;
 
         ((EmptyCell)endElem).CellType = CellType.EndCell;
         EndCell = endElem;
+        endElem.name = "EndCell" + endElem.CellIndex;
     }
 
     private BaseCell GetRandomElementOfMap(BaseCell[,] map)
