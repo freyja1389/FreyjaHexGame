@@ -7,8 +7,9 @@ public class EnemyTank : Enemy
     // Start is called before the first frame update
     void Awake()
     {
-        HitPoints = SetHitPoints();
+        BasetHitPoints = SetHitPoints();
         DmgPoints = SetDmgPoints();
+        CurrentHitPoints = BasetHitPoints;
     }
 
     // Update is called once per frame
@@ -22,8 +23,8 @@ public class EnemyTank : Enemy
         return Random.Range(50, 50 * 3);
     }
 
-    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked)
+    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked, UIController uiController)
     {
-        base.OnContentClicked(player, openEnemy, cellClicked);
+        base.OnContentClicked(player, openEnemy, cellClicked, uiController);
     }
 }

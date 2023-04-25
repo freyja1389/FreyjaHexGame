@@ -41,14 +41,21 @@ public class UIController : MonoBehaviour
         
     }
 
-    public void ChangeEnemyHitBarFillAmount(int hp)
+    public void ChangeEnemyHitBarFillAmount(int currentHp, int baseHp)
     {
-        enemyHitBar.fillAmount = (float)hp / 100;
+        if (currentHp == baseHp)
+        {
+            enemyHitBar.fillAmount = 100; //enemy has 100% HP
+        }
+        else
+        {
+            enemyHitBar.fillAmount = (float)currentHp / (float)baseHp;
+        }
     }
 
     public void UpdateEnemyTextInfo(Enemy enemy)
     {
-        enemy.EnemyInfo.text = "HP: " + enemy.HitPoints + "\n DMG: " + enemy.DmgPoints;
+        enemy.EnemyInfo.text = "HP: " + enemy.CurrentHitPoints + "\n DMG: " + enemy.DmgPoints;
     }
 
     public ItemSlot RelocateBonusIntoBonusCell(Bonus bonus, Player player, BaseCell cellClicked)
@@ -74,7 +81,7 @@ public class UIController : MonoBehaviour
             bonus.Unsubscribe(empty);
             empty.ContentLink = null;
             Destroy(bonus.gameObject);
-        }
+        }  
         return inst;
     }
 
@@ -129,11 +136,11 @@ public class UIController : MonoBehaviour
     public void ViewEnemyInformation(Enemy enemy, EmptyCell cell, Canvas wSCanvas)
     {
         UIController enemyBar = Instantiate(enemy.EnemyHitBarPref, new Vector3(cell.transform.position.x, 1, cell.transform.position.z), Quaternion.Euler(90, 0, 0), wSCanvas.transform);
-        enemyBar.ChangeEnemyHitBarFillAmount(enemy.HitPoints);
+        enemyBar.ChangeEnemyHitBarFillAmount(enemy.CurrentHitPoints, enemy.BasetHitPoints);
         enemy.HitBar = enemyBar;
 
         Text EnemyInfo = Instantiate(EnemyInfoPref, new Vector3(cell.transform.position.x, 1, cell.transform.position.z+0.3f), Quaternion.Euler(90, 0, 0), wSCanvas.transform);
-        EnemyInfo.text = "HP: " + enemy.HitPoints + "\n DMG: " + enemy.DmgPoints;
+        EnemyInfo.text = "HP: " + enemy.CurrentHitPoints + "\n DMG: " + enemy.DmgPoints;
         enemy.EnemyInfo = EnemyInfo;
     }
 

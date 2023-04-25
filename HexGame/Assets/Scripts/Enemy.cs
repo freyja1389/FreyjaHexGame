@@ -8,16 +8,19 @@ using System;
 public class Enemy : CellContent
 {
     public int DmgPoints;
-    public int HitPoints;
+    public int CurrentHitPoints;
+    public int BasetHitPoints;
     public  UIController HitBar;
     public Text EnemyInfo;
     public UIController EnemyHitBarPref;
     private EmptyCell currentcellClicked;
     //public event Action<int> EnemyAlive;
     public event Action<int> EnemyAttackStarted;
+    public event Action<int> EnemyAttackCompleted;
     private Animator anim;
     private DamageSTM damageAnimSTM;
     private AttackSTM attackAnimSTM;
+    private DieSTM dieAnimSTM;
 
 
     //public Action <CellContent> ReadyForDestroy;
@@ -28,9 +31,13 @@ public class Enemy : CellContent
         anim = gameObject.GetComponentInChildren<Animator>();
         attackAnimSTM = anim.GetBehaviour<AttackSTM>();
         damageAnimSTM = anim.GetBehaviour<DamageSTM>();
+        dieAnimSTM = anim.GetBehaviour<DieSTM>();
 
         damageAnimSTM.DamageAnimationComplete += SetAttackAnimation;
-        attackAnimSTM.AttackAnimationStarted += RiseAttackStarted;
+        attackAnimSTM.AttackAnimationStarted+= RiseAttackStarted;
+        attackAnimSTM.AttackAnimationComplete += RiseAttacCompleted;
+        dieAnimSTM.DieAnimationComplete += OnDieAnimationComplete;
+
     }
 
     protected virtual int SetHitPoints()
@@ -50,10 +57,16 @@ public class Enemy : CellContent
         if (!animator == anim) return;
         EnemyAttackStarted?.Invoke(DmgPoints);
     }
+
+    private void RiseAttacCompleted(Animator animator)
+    {
+        if (!animator == anim) return;
+        EnemyAttackCompleted?.Invoke(DmgPoints);
+    }
     public int SetDamage(int dmg)
     {
-        HitPoints = HitPoints - dmg;
-        return HitPoints;
+        CurrentHitPoints = CurrentHitPoints - dmg;
+        return CurrentHitPoints;
     }
 
     public void SetAttackAnimation(Animator animator)
@@ -68,7 +81,7 @@ public class Enemy : CellContent
     }
 
 
-    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked)
+    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked, UIController uiController)
     {
         transform.LookAt(player.transform.position);
         currentcellClicked = cellClicked;
@@ -78,17 +91,26 @@ public class Enemy : CellContent
        player.SetPlayerinteractionEnemyLink(this);
         SetDamageAnimation();
         SetDamage(player.DmgPoints);
-        HitBar.ChangeEnemyHitBarFillAmount(HitPoints);
+        HitBar.ChangeEnemyHitBarFillAmount(CurrentHitPoints, BasetHitPoints);
+        uiController.UpdateEnemyTextInfo(this);
     }
 
-    public override void CheckEnemyDeath(Animator animator)
+    public override void CheckEnemyDeath(Animator animator, Player player)
     {
-        //if (!animator == anim) return;
+       // if (!animator == anim) return;
         //player.SetPlayerDamage(DmgPoints);
-        if (HitPoints <= 0)
+        if (CurrentHitPoints <= 0)
         {
-            base.RiseReadyForDestroy((CellContent)this);
+            EnemyAttackStarted -= player.SetDamageAnimation;
+            EnemyAttackCompleted -= player.SetDamage;
+            anim.SetTrigger("Die");
         }
+    }
+
+    private void OnDieAnimationComplete(Animator animator)
+    {
+        if (!animator == anim) return;
+        base.RiseReadyForDestroy((CellContent)this);
     }
 
     public override void SelfDestroy()

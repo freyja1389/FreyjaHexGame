@@ -34,7 +34,7 @@ public class CellContent : MonoBehaviour
         this.ContentClicked -= cell.OnCellClicked;
     }
 
-    public virtual void OnContentClicked(Player player, List <Enemy> openEnemy, EmptyCell cellClicked)
+    public virtual void OnContentClicked(Player player, List <Enemy> openEnemy, EmptyCell cellClicked, UIController uiController)
     {
     
     }
@@ -52,7 +52,7 @@ public class CellContent : MonoBehaviour
 
     }
 
-    public virtual void CheckEnemyDeath(Animator animator)
+    public virtual void CheckEnemyDeath(Animator animator, Player player)
     {
 
     }

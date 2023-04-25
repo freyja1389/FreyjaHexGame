@@ -11,7 +11,8 @@ public class EnemyDD : Enemy
     {
         CriticalChanse = SetCriticalChanse();
         DmgPoints = SetDmgPoints();
-        HitPoints = SetHitPoints();
+        BasetHitPoints = SetHitPoints();
+        CurrentHitPoints = BasetHitPoints;
     }
 
 
@@ -20,9 +21,9 @@ public class EnemyDD : Enemy
          return Random.Range(10, 100);
     }
 
-    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked)
+    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked, UIController uiController)
     {
-        base.OnContentClicked(player, openEnemy, cellClicked);
+        base.OnContentClicked(player, openEnemy, cellClicked, uiController);
     }
 
 }

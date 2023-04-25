@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
 
     public Enemy InteractionEnemyLink;
 
-    public event Action <Animator> CheckEnemyDeath;
+    public event Action <Animator, Player> CheckEnemyDeath;
 
    // public event Action AttackAnimationPlayedCountinue;
     //public event Action DamageAnimationPlayedCountinue;
@@ -29,18 +29,7 @@ public class Player : MonoBehaviour
 
     public void Update()
     {
-////        if (anim.GetCurrentAnimatorClipInfo(0)[0].clip.name == "Attack" && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
-       // {
-            
-           // AttackAnimationPlayedCountinue?.Invoke();
-        //}
 
-       // if (anim.GetCurrentAnimatorClipInfo(0)[0].clip.name == "Damage_00" && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
-       // {
-        //   // DamageAnimationPlayedCountinue?.Invoke();
-       // }
-
-        //return;
     }
 
     public bool PlayerCanAction()
@@ -67,14 +56,14 @@ public class Player : MonoBehaviour
     {
 
         InteractionEnemyLink = null;
-        SetHitDamagePoints();
+      //  SetHitDamagePoints();
         anim = gameObject.GetComponentInChildren<Animator>();
         attackAnimSTM = anim.GetBehaviour<AttackSTM>();
         attackAnimSTM.AttackAnimationComplete += AttackCompleated;
 
     }
     
-    private void SetHitDamagePoints()
+    public void SetHitDamagePoints()
     {
         hitPoints = 100;
         DmgPoints = 40;
@@ -97,34 +86,31 @@ public class Player : MonoBehaviour
     public void AttackCompleated(Animator animator)
     {
         if (!animator == anim) return;
-        CheckEnemyDeath?.Invoke(null);
+        CheckEnemyDeath?.Invoke(null, this);
     }
 
 
-    public void SetDamageWithAnimation(int dmgPoints)
+    public void SetDamageAnimation(int dmgPoints)
     {
         // yield return new WaitForSeconds(2);
-        //new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).normalizedTime);
-        
+        //new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).normalizedTime);      
             if (dmgPoints > 0)
             {
                 SetDamageAnim();
-                SetDamage(dmgPoints);
-                // this.AttackAnimationPlayedCountinue -= this.SetDamageWithAnimation;
-            
-                UIController.ShowPlayerHP(this);
+               
                 //DamageAnimationPlayedCountinue?.Invoke();
-            }
-        
+            }     
     }
+
 
     private void SetDamageAnim()
     {
         anim.SetTrigger("Damage");
     }
-    private void SetDamage(int value)
+    public void SetDamage(int value)
     {
         hitPoints = Mathf.Clamp(hitPoints - value, 0, 100);
+        UIController.ShowPlayerHP(this);
     }    
 
     public void IncreaseDamage(int bonusDMG)

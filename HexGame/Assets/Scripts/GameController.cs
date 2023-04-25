@@ -113,6 +113,8 @@ public class GameController : MonoBehaviour
                 neighbor.SetMaterial(materials[1]);
         }
 
+
+        player.SetHitDamagePoints();
         UpdatePlayerInformation();
 
         player.RelocateInstantly(mGenerator.StartCell.transform.position);
@@ -137,7 +139,7 @@ public class GameController : MonoBehaviour
     {  
         var content = cellClicked.ContentLink;
 
-        content.OnContentClicked(player, OpenEnemy, cellClicked);
+        content.OnContentClicked(player, OpenEnemy, cellClicked, UIController);
 
         CheckPlayerDeath();
 
@@ -155,7 +157,7 @@ public class GameController : MonoBehaviour
         if (cellContent is Enemy enemy)
         {
             OpenEnemy.Remove(enemy);
-            damageAnimSTM.DamageAnimationComplete -= enemy.CheckEnemyDeath;
+            //damageAnimSTM.DamageAnimationComplete -= enemy.CheckEnemyDeath;
             player.CheckEnemyDeath -= enemy.CheckEnemyDeath;
            // enemy.EnemyAlive -= player.SetDamageWithAnimation;
         }
@@ -169,7 +171,7 @@ public class GameController : MonoBehaviour
     {
         foreach (Enemy enemy in OpenEnemy)
         {
-            enemy.HitPoints += healpoints;
+            enemy.CurrentHitPoints += healpoints;
         }
     }
 
@@ -215,7 +217,7 @@ public class GameController : MonoBehaviour
     {
         foreach (Enemy enem in  OpenEnemy)
         {
-              enem.HitBar.ChangeEnemyHitBarFillAmount(enem.HitPoints);
+              enem.HitBar.ChangeEnemyHitBarFillAmount(enem.CurrentHitPoints, enem.BasetHitPoints);
               UIController.UpdateEnemyTextInfo(enem);
         }
 
@@ -265,7 +267,9 @@ public class GameController : MonoBehaviour
                 enemy.ReadyForDestroy += DestroyCellContent;
                 player.CheckEnemyDeath += enemy.CheckEnemyDeath;
                //enemy.EnemyAlive += player.SetDamageWithAnimation;
-                enemy.EnemyAttackStarted += player.SetDamageWithAnimation;
+                enemy.EnemyAttackStarted += player.SetDamageAnimation;
+                enemy.EnemyAttackCompleted += player.SetDamage;
+
             }
             if (!(emptyCell.ContentLink == null))
             {

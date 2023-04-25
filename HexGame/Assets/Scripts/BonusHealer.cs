@@ -22,9 +22,9 @@ public class BonusHealer : Bonus
     {
         
     }
-    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked)
+    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked, UIController uiController)
     {
-        base.OnContentClicked(player, openEnemy, cellClicked);
+        base.OnContentClicked(player, openEnemy, cellClicked, uiController);
     }
 
     public override void OnContentApplied(Player player, List<Enemy> openEnemy)

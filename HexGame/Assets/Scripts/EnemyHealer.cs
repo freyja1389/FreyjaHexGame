@@ -9,7 +9,8 @@ public class EnemyHealer : Enemy
     void Awake()
     {
         HealPoints = SetHealPoints();
-        HitPoints = SetHitPoints();
+        BasetHitPoints = SetHitPoints();
+        CurrentHitPoints = BasetHitPoints;
         DmgPoints = SetDmgPoints();
     }
 
@@ -23,18 +24,18 @@ public class EnemyHealer : Enemy
         return Random.Range(2, 2 * 3);
     }
 
-    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked)
+    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked, UIController uiController)
     {
         //GetHealToOpenEnemies(HealPoints, openEnemy);
 
-        base.OnContentClicked(player, openEnemy, cellClicked);
+        base.OnContentClicked(player, openEnemy, cellClicked, uiController);
     }
     private void GetHealToOpenEnemies(int healpoints, List<Enemy> openEnemy)
     {
         foreach (Enemy enemy in openEnemy)
         {
-            enemy.HitPoints += healpoints;
-            enemy.HitBar.ChangeEnemyHitBarFillAmount(enemy.HitPoints);
+            enemy.CurrentHitPoints += healpoints;
+            enemy.HitBar.ChangeEnemyHitBarFillAmount(enemy.CurrentHitPoints, enemy.BasetHitPoints);
         }
     }
 
