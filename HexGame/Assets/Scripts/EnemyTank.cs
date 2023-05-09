@@ -23,8 +23,8 @@ public class EnemyTank : Enemy
         return Random.Range(50, 50 * 3);
     }
 
-    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked, UIController uiController)
+    public override void OnContentClicked(Player player, List<Enemy> openEnemy, BaseCell cellClicked)
     {
-        base.OnContentClicked(player, openEnemy, cellClicked, uiController);
+        base.OnContentClicked(player, openEnemy, cellClicked);
     }
 }

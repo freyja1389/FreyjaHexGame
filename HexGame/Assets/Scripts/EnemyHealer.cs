@@ -24,17 +24,17 @@ public class EnemyHealer : Enemy
         return Random.Range(2, 2 * 3);
     }
 
-    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked, UIController uiController)
+    public override void OnContentClicked(Player player, List<Enemy> openEnemy, BaseCell cellClicked)
     {
         //GetHealToOpenEnemies(HealPoints, openEnemy);
 
-        base.OnContentClicked(player, openEnemy, cellClicked, uiController);
+        base.OnContentClicked(player, openEnemy, cellClicked);
     }
     private void GetHealToOpenEnemies(int healpoints, List<Enemy> openEnemy)
     {
         foreach (Enemy enemy in openEnemy)
         {
-            enemy.CurrentHitPoints += healpoints;
+            enemy.SetHeal(healpoints);
             enemy.HitBar.ChangeEnemyHitBarFillAmount(enemy.CurrentHitPoints, enemy.BasetHitPoints);
         }
     }

@@ -8,15 +8,16 @@ using System;
 public class Enemy : CellContent
 {
     public int DmgPoints;
-    public int CurrentHitPoints;
+    public int CurrentHitPoints { get; protected set; }
     public int BasetHitPoints;
     public  UIController HitBar;
     public Text EnemyInfo;
     public UIController EnemyHitBarPref;
-    private EmptyCell currentcellClicked;
+    private BaseCell currentcellClicked;
     //public event Action<int> EnemyAlive;
     public event Action<int> EnemyAttackStarted;
     public event Action<int> EnemyAttackCompleted;
+    public event Action<Enemy> StateChanged;
     private Animator anim;
     private DamageSTM damageAnimSTM;
     private AttackSTM attackAnimSTM;
@@ -65,7 +66,14 @@ public class Enemy : CellContent
     }
     public int SetDamage(int dmg)
     {
-        CurrentHitPoints = CurrentHitPoints - dmg;
+        CurrentHitPoints -= dmg;
+        CheckEnemyDeath();
+        return CurrentHitPoints;
+    }
+
+    public int SetHeal(int healPoints)
+    {
+        CurrentHitPoints += healPoints;
         return CurrentHitPoints;
     }
 
@@ -81,7 +89,7 @@ public class Enemy : CellContent
     }
 
 
-    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked, UIController uiController)
+    public override void OnContentClicked(Player player, List<Enemy> openEnemy, BaseCell cellClicked)
     {
         transform.LookAt(player.transform.position);
         currentcellClicked = cellClicked;
@@ -92,17 +100,18 @@ public class Enemy : CellContent
         SetDamageAnimation();
         SetDamage(player.DmgPoints);
         HitBar.ChangeEnemyHitBarFillAmount(CurrentHitPoints, BasetHitPoints);
-        uiController.UpdateEnemyTextInfo(this);
+        //uiController.UpdateEnemyTextInfo(this);
+        StateChanged?.Invoke(this);
     }
 
-    public override void CheckEnemyDeath(Animator animator, Player player)
+    public override void CheckEnemyDeath()
     {
        // if (!animator == anim) return;
         //player.SetPlayerDamage(DmgPoints);
         if (CurrentHitPoints <= 0)
         {
-            EnemyAttackStarted -= player.SetDamageAnimation;
-            EnemyAttackCompleted -= player.SetDamage;
+            EnemyAttackStarted = null;
+            EnemyAttackCompleted = null;
             anim.SetTrigger("Die");
         }
     }

@@ -29,12 +29,12 @@ public class CellContent : MonoBehaviour
         
     }
 
-    public void Unsubscribe(EmptyCell cell)
+    public void Unsubscribe(BaseCell cell)
     {
         this.ContentClicked -= cell.OnCellClicked;
     }
 
-    public virtual void OnContentClicked(Player player, List <Enemy> openEnemy, EmptyCell cellClicked, UIController uiController)
+    public virtual void OnContentClicked(Player player, List <Enemy> openEnemy, BaseCell cellClicked)
     {
     
     }
@@ -52,7 +52,7 @@ public class CellContent : MonoBehaviour
 
     }
 
-    public virtual void CheckEnemyDeath(Animator animator, Player player)
+    public virtual void CheckEnemyDeath()
     {
 
     }

@@ -2,39 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System;
 using UnityEngine.Audio;
 
 public class MenuControls : MonoBehaviour
 {
     public GameObject MenuPanel;
-    public GameObject NextLevelMenuPanel;
     public GameObject SettingsPanel;
     public bool isFullScreen;
     public AudioMixer Audio;
     public AudioSource sorceAud;
     public AudioClip muz1;
     public AudioClip muz2;
+    [SerializeField]
+    protected SceneManager sceneManager;
+    //public GameObject MenuPanel;
 
-    public event Action StartClicked;
     public void PressedExit()
     {
         Application.Quit();
         Debug.Log("Exit pressed!");
     }
 
-    public void PressedStart()
+    public virtual void PressedStart()
     {
         sorceAud.clip = muz2;
         sorceAud.Play();
-        StartClicked?.Invoke();
+        sceneManager.LoadMainScene();
     }
 
-    public void PressedNextLevel()
-    {
-        StartClicked?.Invoke();
-        NextLevelMenuPanel.SetActive(false);
-    }
 
     public void PressedSettings()
     {
@@ -63,5 +58,10 @@ public class MenuControls : MonoBehaviour
     {
         Audio.SetFloat("masterVolume", sliderValue);
         
+    }
+
+    public void ActivateMenuPanel(bool param)
+    {
+        MenuPanel.SetActive(param);
     }
 }

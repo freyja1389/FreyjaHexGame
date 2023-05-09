@@ -8,11 +8,13 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private Image enemyHitBar;
     [SerializeField]
-    private GameObject GameOverTextBar;
+    private Text GameOverTextBar;
     [SerializeField]
     private Text UnitType;
     [SerializeField]
     private Text EnemyInfoPref;
+    [SerializeField]
+    private Canvas WSCanvas;
 
     public Image PlayerHPBar;
     public Text PlayersHPTextBox;
@@ -26,19 +28,19 @@ public class UIController : MonoBehaviour
 
     public List<ItemSlot> BonusButtons;
 
-    public MenuControls MenuControls;
+    public InGameMenuControls MenuControls;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void ChangeEnemyHitBarFillAmount(int currentHp, int baseHp)
@@ -64,24 +66,24 @@ public class UIController : MonoBehaviour
         if (BonusButtons.Count < 3)
         {
             if (bonus is BonusHealer bonusHealer)
-           {
+            {
                 inst = Instantiate(ButtonBonusHealer);
-           }
-           else if (bonus is BonusDMGBooster bonusDMGBooster)
-           {
+            }
+            else if (bonus is BonusDMGBooster bonusDMGBooster)
+            {
                 inst = Instantiate(ButtonBonusDMGBooster);
-           }
-           else if (bonus is BonusEnemyHPReducer bonusEnemyHPReducer)
-           {
+            }
+            else if (bonus is BonusEnemyHPReducer bonusEnemyHPReducer)
+            {
                 inst = Instantiate(ButtonBonusEnemyHPReducer);
-           }
+            }
             SetBonusButtonSettings(inst, bonus);
             AddBonusButton(inst);
-            var empty = (EmptyCell)cellClicked;
+            var empty = cellClicked;
             bonus.Unsubscribe(empty);
             empty.ContentLink = null;
             Destroy(bonus.gameObject);
-        }  
+        }
         return inst;
     }
 
@@ -109,14 +111,14 @@ public class UIController : MonoBehaviour
         //var instGameOverText = Instantiate(GameOverTextBar, new Vector3(0, 184, 0), Quaternion.identity);
         //var canv = GameObject.FindGameObjectWithTag("MainCanvas");
         //instGameOverText.transform.SetParent(canv.transform, false);
-        var text = GameOverTextBar.GetComponent<Text>();
-        text.text = winLooseText;
-        GameOverTextBar.SetActive(true);
+        //var text = GameOverTextBar.GetComponent<Text>();
+        GameOverTextBar.text = winLooseText;
+        GameOverTextBar.gameObject.SetActive(true);
     }
 
     public void DeActivateGameOverTextBar()
     {
-        GameOverTextBar.SetActive(false);
+        GameOverTextBar.gameObject.SetActive(false);
     }
 
     private void AddBonusButton(ItemSlot bonusButton)
@@ -130,23 +132,27 @@ public class UIController : MonoBehaviour
 
     public void RemoveBonusButton(ItemSlot button)
     {
-        BonusButtons.Remove(button);          
+        BonusButtons.Remove(button);
     }
 
-    public void ViewEnemyInformation(Enemy enemy, EmptyCell cell, Canvas wSCanvas)
+    public void ViewContentInformation(CellContent content)//, EmptyCell cell)
     {
-        UIController enemyBar = Instantiate(enemy.EnemyHitBarPref, new Vector3(cell.transform.position.x, 1, cell.transform.position.z), Quaternion.Euler(90, 0, 0), wSCanvas.transform);
-        enemyBar.ChangeEnemyHitBarFillAmount(enemy.CurrentHitPoints, enemy.BasetHitPoints);
-        enemy.HitBar = enemyBar;
+        if (content is Enemy enemy)
+        {
+            UIController enemyBar = Instantiate(enemy.EnemyHitBarPref, new Vector3(enemy.transform.position.x, 1, enemy.transform.position.z), Quaternion.Euler(90, 0, 0), WSCanvas.transform);
+            enemyBar.ChangeEnemyHitBarFillAmount(enemy.CurrentHitPoints, enemy.BasetHitPoints);
+            enemy.HitBar = enemyBar;
 
-        Text EnemyInfo = Instantiate(EnemyInfoPref, new Vector3(cell.transform.position.x, 1, cell.transform.position.z+0.3f), Quaternion.Euler(90, 0, 0), wSCanvas.transform);
-        EnemyInfo.text = "HP: " + enemy.CurrentHitPoints + "\n DMG: " + enemy.DmgPoints;
-        enemy.EnemyInfo = EnemyInfo;
+            Text EnemyInfo = Instantiate(EnemyInfoPref, new Vector3(enemy.transform.position.x, 1, enemy.transform.position.z + 0.3f), Quaternion.Euler(90, 0, 0), WSCanvas.transform);
+            //EnemyInfo.text = "HP: " + enemy.CurrentHitPoints + "\n DMG: " + enemy.DmgPoints;
+            EnemyInfo.text = $"HP: {enemy.CurrentHitPoints}\n DMG: {enemy.DmgPoints}";
+            enemy.EnemyInfo = EnemyInfo;
+        }
     }
 
     public void NextLevelMenuSpawn()
     {
-        MenuControls.NextLevelMenuPanel.SetActive(true);
+      MenuControls.NextLevelMenuPanel.SetActive(true);
     }
 
 }

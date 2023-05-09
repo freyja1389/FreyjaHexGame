@@ -2,7 +2,7 @@
 using UnityEngine;
 using System;
 
-public class MapGenerator:MonoBehaviour
+public class MapGenerator : MonoBehaviour
 {
     //добавить возможность настраивать ширину и высоту поля через инсперктор +
     //Сменить тип HexCells на двухмерный массив +
@@ -15,15 +15,21 @@ public class MapGenerator:MonoBehaviour
     [SerializeField]
     private GameController gController;
 
-    public  BaseCell StartCell;
-    public BaseCell EndCell;
+    private BaseCell startCell;
+    private BaseCell endCell;
 
-    public List<BaseCell> HexCells;
-    public BaseCell[,] HexCells1;
+    //public List<BaseCell> HexCells;
+    //public BaseCell[,] HexCells1;
     public List<CellContent> CellsContent = new List<CellContent>();
 
 
-    
+    public void Clear()
+    {
+        foreach (Transform item in transform)
+        {
+            Destroy(item.gameObject);
+        }
+    }
     private int CheckTypeOfEnemy()
     {
         System.Random rnd = new System.Random();
@@ -33,9 +39,9 @@ public class MapGenerator:MonoBehaviour
     private int CheckTypeOfBonus()
     {
         System.Random rnd = new System.Random();
-        return rnd.Next(3, 6); 
+        return rnd.Next(3, 6);
     }
-    
+
 
 
     private Vector3 GetWorldPosition(int x, int y, float hexSize = 1)
@@ -57,7 +63,7 @@ public class MapGenerator:MonoBehaviour
     {
         if (exception == 100000)
         {
-            System.Random rnd = new System.Random(); 
+            System.Random rnd = new System.Random();
             return rnd.Next(stValue, endValue);
         }
         else
@@ -69,17 +75,17 @@ public class MapGenerator:MonoBehaviour
                 value = rnd.Next(stValue, endValue);
             }
             return value;
-        } 
+        }
     }
-  
+
 
     List<Vector2Int> GetALLNeighbours(Vector2Int vect, List<Vector2Int> missingCellCoordinates, int rows, int columns)
     {
-        List<Vector2Int>  nList = new List<Vector2Int>();
+        List<Vector2Int> nList = new List<Vector2Int>();
         if (vect.y % 2 == 0)
         {
             nList.Clear();
-            if (!((vect.x - 1) < 0) )
+            if (!((vect.x - 1) < 0))
             {
                 if (!missingCellCoordinates.Contains(new Vector2Int(vect.x - 1, vect.y)))
                 {
@@ -178,23 +184,23 @@ public class MapGenerator:MonoBehaviour
         return nList;
     }
 
-    List<Vector2Int> GetALLSpawnedNeighbours(Vector2Int vect, List<Vector2Int> missingCellCoordinates, List<Vector2Int> map, List<Vector2Int>deleted, int rows, int columns)
+    /*List<Vector2Int> GetALLSpawnedNeighbours(Vector2Int vect, List<Vector2Int> missingCellCoordinates, List<Vector2Int> map, List<Vector2Int> deleted, int rows, int columns)
     {
         var checkNeighbors = GetALLNeighbours(vect, missingCellCoordinates, rows, columns);
         var spawnedNeighbours = new List<Vector2Int>();
 
-                foreach (var neighbour in checkNeighbors)
-                {
-                    if (map.Contains(neighbour) && !deleted.Contains(neighbour))
-                    {
-                        spawnedNeighbours.Add(neighbour);
-                    }
-                }
-            
-        return spawnedNeighbours;
-    }
+        foreach (var neighbour in checkNeighbors)
+        {
+            if (map.Contains(neighbour) && !deleted.Contains(neighbour))
+            {
+                spawnedNeighbours.Add(neighbour);
+            }
+        }
 
-    private void CheckContent(EmptyCell cell)
+        return spawnedNeighbours;
+    }*/
+
+    private void SetContentPrefab(BaseCell cell)
     {
         if (cell.CellType == CellType.StartCell || cell.CellType == CellType.EndCell) return;
         System.Random rnd = new System.Random();
@@ -215,7 +221,7 @@ public class MapGenerator:MonoBehaviour
         }
     }
 
-    public BaseCell[,] MapGenerate(int rows, int columns, Transform transform, Player player, int lvl)
+    public Map MapGenerate(int rows, int columns, Player player, int lvl)
     {
         //int lvlkoeff = (int)Mathf.Round(lvl / 2);
         //rows = rows + lvlkoeff;
@@ -226,9 +232,9 @@ public class MapGenerator:MonoBehaviour
         var neighbourCoords = new List<Vector2Int>() { startPoint };
         var lenght = rows * columns;
         var missingCellCoordinates = new List<Vector2Int>();
-       // int startCellIndex = TakeRandomIntOfRange(0, lenght - 1);
-       // int endCellIndex = TakeRandomIntOfRange(0, lenght - 1, startCellIndex);
-      //  Debug.Log($"start: {startCellIndex.ToString()} end: {endCellIndex.ToString()}");
+        // int startCellIndex = TakeRandomIntOfRange(0, lenght - 1);
+        // int endCellIndex = TakeRandomIntOfRange(0, lenght - 1, startCellIndex);
+        //  Debug.Log($"start: {startCellIndex.ToString()} end: {endCellIndex.ToString()}");
 
         for (int i = 0; i < neighbourCoords.Count; i++)
         {
@@ -243,18 +249,18 @@ public class MapGenerator:MonoBehaviour
   
                 neighbourCoords.Add(item);       
             }*/
-           /* if (startCellIndex == i)
-            {
-                cellType = StartCell;
-            }
-            else if (endCellIndex == i)
-            {
-                cellType = EndCell;
-            }
-            else
-            {*/
-                cellType = GetCellType(coord, missingCellCoordinates, innerNeighbourCoords);
-           // }
+            /* if (startCellIndex == i)
+             {
+                 cellType = StartCell;
+             }
+             else if (endCellIndex == i)
+             {
+                 cellType = EndCell;
+             }
+             else
+             {*/
+            cellType = GetCellType(coord, missingCellCoordinates, innerNeighbourCoords);
+            // }
 
             if (cellType is MissingCell)
             {
@@ -273,7 +279,7 @@ public class MapGenerator:MonoBehaviour
                 }
                 var currentCell = CreateCell(coord, cellType, player);
                 currentCell.CellIndex = new Vector2Int(coord.x, coord.y);
-                CheckContent((EmptyCell)currentCell);
+                SetContentPrefab(currentCell);
                 map[currentCell.CellIndex.x, currentCell.CellIndex.y] = currentCell;
             }
             // var innerNeighbourCoords = GetALLNeighbours(coord, missingCellCoordinates);// GetNeighboursCoords(coord, rows, columns); 
@@ -291,11 +297,12 @@ public class MapGenerator:MonoBehaviour
 
         SetStartEndCell(map, player);
         //CheckSeparateCells(map, missingCellCoordinates, rows, columns);
-        return map;
+        
+        return new Map(map, startCell, endCell);
     }
 
 
-    private void SetStartEndCell(BaseCell[,] map,  Player player)
+    private void SetStartEndCell(BaseCell[,] map, Player player)
     {
         var startElem = GetRandomElementOfMap(map);
 
@@ -311,10 +318,10 @@ public class MapGenerator:MonoBehaviour
         {
             if (!(endElem == null) & !(endElem == startElem)) break;
 
-                endElem = GetRandomElementOfMap(map);
+            endElem = GetRandomElementOfMap(map);
         }
 
-         ((EmptyCell)startElem).CellType = CellType.StartCell;
+         startElem.CellType = CellType.StartCell;
         if (gController.player == null)
         {
             var playerInst = Instantiate(PlayerPrefab, startElem.transform.position, transform.rotation);
@@ -328,18 +335,18 @@ public class MapGenerator:MonoBehaviour
 
         }
 
-        StartCell = startElem;
+        startCell = startElem;
         startElem.name = "StartCell" + startElem.CellIndex;
 
-        ((EmptyCell)endElem).CellType = CellType.EndCell;
-        EndCell = endElem;
+        endElem.CellType = CellType.EndCell;
+        endCell = endElem;
         endElem.name = "EndCell" + endElem.CellIndex;
     }
 
     private BaseCell GetRandomElementOfMap(BaseCell[,] map)
     {
         var rand = new System.Random();
-        return map[rand.Next(0, map.GetLength(0)), rand.Next(0, map.GetLength(1))]; 
+        return map[rand.Next(0, map.GetLength(0)), rand.Next(0, map.GetLength(1))];
     }
 
 
@@ -350,7 +357,7 @@ public class MapGenerator:MonoBehaviour
         cell = Instantiate(cellType, v3coords, cellType.transform.rotation, transform);
         cell.CellIndex = new Vector2Int(coords.x, coords.y);
         cell.name = cell.name + cell.CellIndex.ToString();
-        HexCells.Add(cell);
+       // HexCells.Add(cell);
 
         /*if (cellType == StartCell)
         {
@@ -372,8 +379,8 @@ public class MapGenerator:MonoBehaviour
         }
         else
         {*/
-            ((EmptyCell)cell).CellType = CellType.EmptyCell; 
-       // }
+        cell.CellType = CellType.EmptyCell;
+        // }
         return cell;
     }
 
@@ -402,7 +409,7 @@ public class MapGenerator:MonoBehaviour
     private BaseCell GetCellType(Vector2Int startCoords, List<Vector2Int> missingCellCoordinates, List<Vector2Int> innerNeighbourCoords)
     {
         var randomList = new List<BaseCell>(hexCellPrefabs);
-        var cellType =  randomList[UnityEngine.Random.Range(0, randomList.Count)];
+        var cellType = randomList[UnityEngine.Random.Range(0, randomList.Count)];
         return CheckCellType(startCoords, missingCellCoordinates, cellType, innerNeighbourCoords);
     }
 
@@ -419,14 +426,14 @@ public class MapGenerator:MonoBehaviour
         else //odd
         {
             if (missingCellCoordinates.Contains(new Vector2Int(startCoords.x - 1, startCoords.y + 1)) | missingCellCoordinates.Contains(new Vector2Int(startCoords.x + 1, startCoords.y - 1)))//если над ним  и под ним наискосок пустая, то поменять тип ячейки на не пустой
-                                                                                                     
+
             {
                 cellType = hexCellPrefabs[0];
             }
         }
         return cellType;
     }
-        
+
 }
 
 

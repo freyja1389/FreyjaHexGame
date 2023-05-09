@@ -28,8 +28,12 @@ public class Bonus : CellContent
 
     }
 
+    public void ActivateGameObject(bool flag)
+    {
+        gameObject.SetActive(flag);
+    }
 
-    public override void OnContentClicked(Player player, List<Enemy> openEnemy, EmptyCell cellClicked, UIController uiController)
+    public override void OnContentClicked(Player player, List<Enemy> openEnemy, BaseCell cellClicked)
     {
         // player.SetHeal(HealPoints);
         //if (!readyForApply)

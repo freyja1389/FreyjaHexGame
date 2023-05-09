@@ -16,162 +16,124 @@ public class GameController : MonoBehaviour
     public StateMachineBehaviour AnimAttack;
     //public Text PlayersHPTextBox;
     //public List<BaseCell> HexCells;
-    public BaseCell[,] HexCells;
+   // public BaseCell[,] HexCells;
     public int Rows = 0;
     // public Image Bar;
-    public GameObject MenuPanel;
+    
     public MenuControls Menu;
     public Text LvlInfo;
     // public UIController EnemyHitBarPref;
-    public Canvas WSCanvas;
+    
     public Canvas UICanvas;
     public UIController UIController;
     public Player player;
 
     [SerializeField]
-    private MapGenerator mGenerator;
+    private MapGenerator mapGenerator;
     [SerializeField]
     private Material[] materials;
     [SerializeField]
-    //private GameObject GameOverTextBar;
+    private GameMenuConstants gameMenuConstants;
+    [SerializeField]
+    private SceneManager sceneManager;
 
     private List<BaseCell> neighbors;
     private Vector2Int playerPositionInMap;
     private PlayersProgress playerProgress;
-    private string filePath;
+    private string filePath => Application.persistentDataPath + @"\ProgressData";
     private BaseCell PrevCell;
-    public List<Enemy> OpenEnemy;
+    
     public DamageSTM damageAnimSTM;
+    private Map map;
 
 
 
 
 
-    public readonly List<Vector2Int> neighborRulesEvenY = new List<Vector2Int> //чет y
+    
+
+    void Awake()
     {
-         new Vector2Int(-1, 1),
-         new Vector2Int(0, -1),
-         new Vector2Int(1, 0),
-         new Vector2Int(0, 1),
-         new Vector2Int(-1, -1),
-         new Vector2Int(-1, 0),
-    };
-    public readonly List<Vector2Int> neighborRulesOddY = new List<Vector2Int> //нечет y
-    {
-         new Vector2Int(0, -1),
-         new Vector2Int(1, -1),
-         new Vector2Int(1, 0),
-         new Vector2Int(1, 1),
-         new Vector2Int(0, 1),
-         new Vector2Int(-1, 0),
-
-    };
-
+        //filePath = Application.persistentDataPath + @"\ProgressData";
+    }
 
     void Start()
     {
-        Menu.StartClicked += OnStartClicked;
+        //Menu.StartClicked += OnStartClicked;
+        StartLevel();
     }
 
     private void StartLevel()
     {
-        //clear the map
-        if (!(HexCells == null))
-        {
-            foreach (var cell in HexCells)
-            {
-                if (!(cell == null))
-                {
-                    cell.CellClicked -= OnCellClicked;
-                }
-            }
-        }
 
-        var childcount = mGenerator.transform.childCount;
-        if (childcount > 0)
-        {
-            for (int i = 0; i < childcount; i++)
-            {
-                Destroy(mGenerator.transform.GetChild(i).gameObject);
-            }
-
-        }
-        
-        ////////////////////
-        filePath = Application.persistentDataPath + @"\ProgressData";
+        ClearTheMap();
+        ////////////////////        
         LoadProgress();
-        LvlInfo.text = "Lvl:" + playerProgress.Lvl;
+      //  LvlInfo.text = "Lvl:" + playerProgress.Lvl;
 
         UIController.DeActivateGameOverTextBar();
 
         //HexCells = mGenerator.MapCreate1(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
-        HexCells = mGenerator.MapGenerate(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
-        mGenerator.StartCell.SetMaterial(materials[6]);
-        neighbors = GetAvailableCells(mGenerator.StartCell);
+        map = mapGenerator.MapGenerate(Rows, Columns, player, playerProgress.Lvl);
+
+        map.StartCell.SetMaterial(materials[6]);
+        neighbors = map.GetAvailableCells(map.StartCell);
         foreach (var neighbor in neighbors)
         {
-                neighbor.SetMaterial(materials[1]);
+            neighbor.SetMaterial(materials[1]);
         }
-
 
         player.SetHitDamagePoints();
         UpdatePlayerInformation();
 
-        player.RelocateInstantly(mGenerator.StartCell.transform.position);
-        playerPositionInMap = mGenerator.StartCell.CellIndex;
+        player.RelocateInstantly(map.StartCell.transform.position);
+        playerPositionInMap = map.StartCell.CellIndex;
 
         var animPlayer = player.GetComponentInChildren<Animator>();
         damageAnimSTM = animPlayer.GetBehaviour<DamageSTM>();
 
-        foreach (var cell in HexCells)
-        {
-            if (!(cell == null))
-            {
-                cell.CellClicked += OnCellClicked;
-            }
-        }
-       
+        map.CellClicked += OnCellClicked;
+        map.ContentShown += UIController.ViewContentInformation;
+        map.BonusClicked += MoveBonusIntoBonusCell;
 
-        PrevCell = mGenerator.StartCell;
+        PrevCell = map.StartCell;
     }
 
-    public void cellUsed(EmptyCell cellClicked)
-    {  
-        var content = cellClicked.ContentLink;
+    void ClearTheMap()
+    {
+        //clear the map
+        if (mapGenerator is null) return;
+        mapGenerator.Clear();
+    }
 
-        content.OnContentClicked(player, OpenEnemy, cellClicked, UIController);
+    public void CellUsed(BaseCell clickedCell)
+    {
+        var content = clickedCell.ContentLink;
+
+        if(content is Enemy enemy)
+        {
+            enemy.StateChanged += UIController.UpdateEnemyTextInfo;
+        }
+        content.OnContentClicked(player, map.OpenEnemy, clickedCell);//rename its not event!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         CheckPlayerDeath();
 
-        if (cellClicked.gameObject == null)
+        if (clickedCell.gameObject is null)
         {
-            PrevCell = OnCellActivated(cellClicked, PrevCell);
+            PrevCell = OnCellActivated(clickedCell, PrevCell); //rename its not event - if dead - why execute?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         }
     }
 
- 
 
-    private void DestroyCellContent(CellContent cellContent)
-    {
 
-        if (cellContent is Enemy enemy)
-        {
-            OpenEnemy.Remove(enemy);
-            //damageAnimSTM.DamageAnimationComplete -= enemy.CheckEnemyDeath;
-            player.CheckEnemyDeath -= enemy.CheckEnemyDeath;
-           // enemy.EnemyAlive -= player.SetDamageWithAnimation;
-        }
- 
-        player.UnsubscribePlayerAnimationEvents();
 
-        cellContent.SelfDestroy();
-    }
+   
 
     public void GetHealToOpenEnemies(int healpoints)
     {
-        foreach (Enemy enemy in OpenEnemy)
+        foreach (Enemy enemy in map.OpenEnemy)
         {
-            enemy.CurrentHitPoints += healpoints;
+            enemy.SetHeal(healpoints);
         }
     }
 
@@ -186,27 +148,27 @@ public class GameController : MonoBehaviour
         if (player.HitPoints <= 0)
         {
             UIController.ShowPlayerHP(player);
-            var text = "Game Over!";
-            UIController.ShowWinLooseInformation(text);
+            //var text = "Game Over!";
+            UIController.ShowWinLooseInformation(gameMenuConstants.LooseMessage);
         }
     }
 
-    private void MovePlayer(EmptyCell cell)
+    private void MovePlayer(BaseCell cell)
     {
         player.Relocation(cell.transform.position);
     }
 
-    public void OnContentShown(CellContent content)
+    /*public void OnContentShown(CellContent content)
     {
         if (content is Enemy enemy)
         {
-            OpenEnemy.Add(enemy);
+            OpenEnemy.Add(enemy); //- relocated to Map CellShownContent func
         }
-    }
-    
+    }*/
+
     public void OnUseBonus(Bonus bonus, ItemSlot button)
     {
-        bonus.OnContentApplied(player, OpenEnemy);
+        bonus.OnContentApplied(player, map.OpenEnemy);
         UpdatePlayerInformation();
         UpdateOpenEnemyInformation();
         button.UseBonus -= OnUseBonus;
@@ -215,10 +177,10 @@ public class GameController : MonoBehaviour
 
     public void UpdateOpenEnemyInformation()
     {
-        foreach (Enemy enem in  OpenEnemy)
+        foreach (Enemy enem in map.OpenEnemy)
         {
-              enem.HitBar.ChangeEnemyHitBarFillAmount(enem.CurrentHitPoints, enem.BasetHitPoints);
-              UIController.UpdateEnemyTextInfo(enem);
+            enem.HitBar.ChangeEnemyHitBarFillAmount(enem.CurrentHitPoints, enem.BasetHitPoints);
+            UIController.UpdateEnemyTextInfo(enem);
         }
 
     }
@@ -234,167 +196,127 @@ public class GameController : MonoBehaviour
     {
         var BonusButton = UIController.RelocateBonusIntoBonusCell(bonus, player, cellClicked);
         if (BonusButton == null) return;
-        bonus.gameObject.SetActive(false);
+        bonus.ActivateGameObject(false);
         BonusButton.UseBonus += OnUseBonus;
         OnCellActivated(cellClicked, PrevCell);
     }
+
+ 
 
     public void OnCellClicked(BaseCell cellClicked)
     {
         if (!player.PlayerCanAction()) return;
 
-        if (!IsNeighbor(cellClicked)) return;
+        if (!map.IsNeighbor(cellClicked, playerPositionInMap)) return;
 
         player.transform.LookAt(cellClicked.transform.position);
 
 
-        var emptyCell = (EmptyCell)cellClicked;
+        //var emptyCell = (EmptyCell)cellClicked;
 
-        if (!emptyCell.Opened)
+        if (!cellClicked.Opened)
         {
-            emptyCell.ShownContent += OnContentShown;
-            emptyCell.ShowContent(WSCanvas, UIController);
-            emptyCell.ShownContent -= OnContentShown;
-            emptyCell.Opened = true;
-            if (emptyCell.ContentLink  is Bonus bonus)
+            cellClicked.Opened = true;
+            cellClicked.ShowContent();  
+
+            if (cellClicked.ContentLink is Bonus bonus)
             {
                 bonus.ParentCell = cellClicked;
-                bonus.MoveBonusIntoBonusCell += MoveBonusIntoBonusCell;
+                //bonus.MoveBonusIntoBonusCell += MoveBonusIntoBonusCell;
             }
-            else if (emptyCell.ContentLink is Enemy enemy)
+            else if (cellClicked.ContentLink is Enemy enemy)
             {
-               // damageAnimSTM.DamageAnimationComplete += enemy.CheckEnemyDeath;
-                enemy.ReadyForDestroy += DestroyCellContent;
-                player.CheckEnemyDeath += enemy.CheckEnemyDeath;
-               //enemy.EnemyAlive += player.SetDamageWithAnimation;
+                // damageAnimSTM.DamageAnimationComplete += enemy.CheckEnemyDeath;
+                //player.CheckEnemyDeath += enemy.CheckEnemyDeath;
+                //enemy.EnemyAlive += player.SetDamageWithAnimation;
                 enemy.EnemyAttackStarted += player.SetDamageAnimation;
                 enemy.EnemyAttackCompleted += player.SetDamage;
 
             }
-            if (!(emptyCell.ContentLink == null))
-            {
-                return;
-            }
+            if (cellClicked.ContentLink is not null) return;
         }
 
-        if (emptyCell.ContentLink == null)
-        {           
-            emptyCell.Opened = true;
-            if (cellClicked == mGenerator.EndCell)
-            {   
+        if (cellClicked.ContentLink == null)
+        {
+            cellClicked.Opened = true;
+            if (cellClicked == map.EndCell)// вынести в класс 2карта", и сделать подпиской
+            {
+                player.Relocation(cellClicked.transform.position);
                 cellClicked.SetMaterial(materials[5]);
                 playerProgress.Lvl++;
-                SaveProgress();
                 UIController.ShowPlayerHP(player);
-                var text = "You Win!";
-                UIController.ShowWinLooseInformation(text);
+                //var text = "You Win!";
+                UIController.ShowWinLooseInformation(gameMenuConstants.WinMessage);
                 UIController.NextLevelMenuSpawn();
+                SaveProgress();
 
             }
+            else
+            {
                 PrevCell = OnCellActivated(cellClicked, PrevCell);
+            }
             //return;
         }
         else
         {
-            cellUsed(emptyCell);
+            CellUsed(cellClicked);
         }
-        foreach (CellContent enemy in OpenEnemy)
-        {
-            enemy.OnAnyCellClicked(OpenEnemy);
-        }
+
+        map.OpenEnemyOnCellClicked();
     }
 
-   
 
-    public void OnStartClicked()
+
+    public void OnStartClicked() //  ////////////////////////////////////////
     {
-        MenuPanel.SetActive(false);
+       // Menu.ActivateMenuPanel(false);
+       // Menu.ActivateBackMenuPanel(true);
         StartLevel();
     }
 
     private void SaveProgress()
     {
-        BinaryFormatter formatter = new BinaryFormatter();
+        var formatter = new BinaryFormatter();
 
-        using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            formatter.Serialize(stream, playerProgress);
-        }
+        using var stream = new FileStream(filePath, FileMode.Create);
+        formatter.Serialize(stream, playerProgress);
     }
 
     private void LoadProgress()
     {
-        BinaryFormatter formatter = new BinaryFormatter();
-     
+        var formatter = new BinaryFormatter();
+
         if (!File.Exists(filePath))
         {
             playerProgress = new PlayersProgress();
             return;
         }
 
-        using (var stream = new FileStream(filePath, FileMode.Open))
-        {
-            playerProgress = (PlayersProgress)formatter.Deserialize(stream);
-        }   
+        using var stream = new FileStream(filePath, FileMode.Open);
+        playerProgress = (PlayersProgress)formatter.Deserialize(stream);
     }
 
-    private bool IsNeighbor(BaseCell cellClicked)
-    {
-        var distance = cellClicked.CellIndex - playerPositionInMap;
-        if (playerPositionInMap.y % 2 == 0)
-        {
-            return neighborRulesEvenY.Contains(distance);
-        }
-        {
-            return neighborRulesOddY.Contains(distance);
-        }
-    }
+    
 
-    private List<BaseCell> GetAvailableCells(BaseCell startCell)
-    {
-        List<BaseCell> NeighborCells = new List<BaseCell>();
-        foreach (var cell in HexCells)
-        {
-            if (!(cell == null))
-            {
-                var distance = cell.CellIndex - startCell.CellIndex;
-                if (startCell.CellIndex.y % 2 == 0)
-                {
-                    if (neighborRulesEvenY.Contains(distance))
-                    {
-                        NeighborCells.Add(cell);
-                    }
-                }
-                else
-                {
-                    if (neighborRulesOddY.Contains(distance))
-                    {
-                        NeighborCells.Add(cell);
-                    }
-                }
-            }
-            
-        }
-        return NeighborCells;
-    }
+   
 
-    private void SetNeighbornsMaterial(BaseCell cellClicked)
+    private void SetNeighbornsMaterial(BaseCell cellClicked) //incapsulate to Map class
     {
 
-        neighbors = GetAvailableCells(cellClicked);
+        neighbors = map.GetAvailableCells(cellClicked);
         foreach (var neighbor in neighbors)
         {
-            var empty = (EmptyCell)neighbor;
+           // var empty = (EmptyCell)neighbor;
 
-            if (empty.CellType == CellType.StartCell)//StartCell
+            if (neighbor.CellType == CellType.StartCell)//StartCell
             {
                 continue;
             }
-           // if (empty.CellType == CellType.EndCell)
-           // {
-              //  neighbor.SetMaterial(materials[5]);
-               // continue;
-          //  } 
+            // if (empty.CellType == CellType.EndCell)
+            // {
+            //  neighbor.SetMaterial(materials[5]);
+            // continue;
+            //  } 
             neighbor.SetMaterial(materials[1]);
         }
     }
@@ -402,37 +324,14 @@ public class GameController : MonoBehaviour
 
     private void ActivateCellMaterial(BaseCell cellClicked)
     {
-       /*Material material;
-        if (cellClicked is EnemyCell enemy)
-        {
-            material = materials[3];
-        }
-        else if (cellClicked is BonusCell bonus)
-        {
-            material = materials[2];
-        }
-        else if (cellClicked is EmptyCell empty)
-        {
-            if (empty.CellType == CellType.EndCell)//EndCell
-            {
-                material = materials[5];
-            }
-            else
-            {
-                material = materials[4];
-            }
-        }
-        else
-        {*/
-          //  material = materials[4];
-        //}
+
         cellClicked.SetMaterial(materials[4]);
     }
 
-    private BaseCell OnCellActivated(BaseCell cellClicked, BaseCell PrevCell)
+    private BaseCell OnCellActivated(BaseCell cellClicked, BaseCell PrevCell) // is not  subscribtion to event
     {
-        
-           //PlayersHPTextBox.text = "Player's HP: " + player.HitPoints;
+
+        //PlayersHPTextBox.text = "Player's HP: " + player.HitPoints;
         //Bar.fillAmount = (float)player.HitPoints / 100;
         playerPositionInMap = cellClicked.CellIndex;
 
@@ -443,21 +342,21 @@ public class GameController : MonoBehaviour
         //ActivateCellMaterial(cellClicked);
         SetLockedMaterial(PrevCell, cellClicked);
         SetNeighbornsMaterial(cellClicked);
-       
-       PrevCell = cellClicked;
-       return PrevCell;
+
+        PrevCell = cellClicked;
+        return PrevCell;
         //cellClicked.Activate();
     }
 
-    private void SetLockedMaterial(BaseCell PrevCell, BaseCell cellClicked)
+    private void SetLockedMaterial(BaseCell PrevCell, BaseCell cellClicked) //its MAP
     {
-        neighbors = GetAvailableCells(PrevCell);
+        neighbors = map.GetAvailableCells(PrevCell);
         foreach (var neighbor in neighbors)
         {
-            var empty = (EmptyCell)neighbor;
+           // var empty = (EmptyCell)neighbor;
 
             if (neighbor.Open) continue;
-            if (empty.CellType==CellType.StartCell) continue;
+            if (neighbor.CellType == CellType.StartCell) continue;
             if (neighbor == cellClicked) continue;
 
             neighbor.SetMaterial(materials[0]);

@@ -157,10 +157,5 @@ public class Player : MonoBehaviour
         StartCoroutine(MoveToTarget(vector));
     }
 
-    public void UnsubscribePlayerAnimationEvents()
-    {
-        //attackAnimSTM.AttackAnimationComplete -= SetDamageWithAnimation;
-        //damageAnimSTM.DamageAnimationComplete -= SetDamageWithAnimation;
-
-    }
+  
 }
