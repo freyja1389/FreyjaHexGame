@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
 
-public class MenuControls : MonoBehaviour
+public abstract class BaseMenuControls : MonoBehaviour
 {
     public GameObject MenuPanel;
     public GameObject SettingsPanel;

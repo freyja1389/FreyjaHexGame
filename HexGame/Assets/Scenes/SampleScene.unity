@@ -750,20 +750,13 @@ MonoBehaviour:
   Columns: 10
   AnimAttack: {fileID: 0}
   Rows: 10
-  Menu: {fileID: 0}
+  Menu: {fileID: 7082323744428080792}
   LvlInfo: {fileID: 7082323743260000639}
   UICanvas: {fileID: 7082323744428080784}
   UIController: {fileID: 836436181}
   player: {fileID: 0}
   mapGenerator: {fileID: 940905550}
-  materials:
-  - {fileID: 2100000, guid: 66b5ba44cd2dac14b85b5b40a2b33861, type: 2}
-  - {fileID: 2100000, guid: 6345f2b9ed1d8df4aa4b15f3cf1e6d40, type: 2}
-  - {fileID: 2100000, guid: 6b5af0c190fab61418f29af8099d38f6, type: 2}
-  - {fileID: 2100000, guid: 0a239bb40b8bae046bb654e6b53ded33, type: 2}
-  - {fileID: 2100000, guid: aeb14df3bd3213b4584807444d11324d, type: 2}
-  - {fileID: 2100000, guid: 933d0ec16a2599a4aba8b7b6e748e90a, type: 2}
-  - {fileID: 2100000, guid: 397df88b9dc3f8843bc652e5a0b61555, type: 2}
+  cellMaterials: {fileID: 11400000, guid: f78acf6ccac45314583af14a1806a829, type: 2}
   gameMenuConstants: {fileID: 11400000, guid: 865d39bfdfbae6241a2492eceade0f93, type: 2}
   sceneManager: {fileID: 11400000, guid: 9145aa94d992bd447b610275e5bc38f2, type: 2}
   damageAnimSTM: {fileID: 0}
@@ -868,7 +861,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7082323743385111909}
+      - m_Target: {fileID: 7082323744428080792}
         m_TargetAssemblyTypeName: InGameMenuControls, Assembly-CSharp
         m_MethodName: BackToGame
         m_Mode: 1
@@ -962,8 +955,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7082323743385111909}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
+      - m_Target: {fileID: 7082323744428080792}
+        m_TargetAssemblyTypeName: BaseMenuControls, Assembly-CSharp
         m_MethodName: PressedExit
         m_Mode: 1
         m_Arguments:
@@ -2183,8 +2176,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7082323743385111909}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
+      - m_Target: {fileID: 7082323744428080792}
+        m_TargetAssemblyTypeName: BaseMenuControls, Assembly-CSharp
         m_MethodName: PressedBackSettings
         m_Mode: 1
         m_Arguments:
@@ -2613,7 +2606,6 @@ GameObject:
   - component: {fileID: 7082323743385111898}
   - component: {fileID: 7082323743385111908}
   - component: {fileID: 7082323743385111899}
-  - component: {fileID: 7082323743385111909}
   m_Layer: 5
   m_Name: Menu
   m_TagString: Untagged
@@ -2683,28 +2675,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7082323743385111897}
   m_CullTransparentMesh: 1
---- !u!114 &7082323743385111909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7082323743385111897}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16ef54fb2b0924b4eb510207c4f0842a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MenuPanel: {fileID: 7082323742687264163}
-  SettingsPanel: {fileID: 7082323744206747448}
-  isFullScreen: 0
-  Audio: {fileID: 24100000, guid: 6f08d042497ad0940880a2323e3fb413, type: 2}
-  sorceAud: {fileID: 7082323743673034733}
-  muz1: {fileID: 8300000, guid: c88eeb2151c713b49a98191685ff87b0, type: 3}
-  muz2: {fileID: 8300000, guid: 6549aef3c5740f841909b8fcd8729edc, type: 3}
-  sceneManager: {fileID: 11400000, guid: 9145aa94d992bd447b610275e5bc38f2, type: 2}
-  NextLevelMenuPanel: {fileID: 7082323743570173584}
-  BackMenuPanel: {fileID: 7082323743597317172}
 --- !u!222 &7082323743391828912
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2797,8 +2767,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7082323743385111909}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
+      - m_Target: {fileID: 7082323744428080792}
+        m_TargetAssemblyTypeName: InGameMenuControls, Assembly-CSharp
         m_MethodName: BackToMenu
         m_Mode: 1
         m_Arguments:
@@ -3352,9 +3322,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7082323743385111909}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
-        m_MethodName: BackToMenu
+      - m_Target: {fileID: 7082323744428080792}
+        m_TargetAssemblyTypeName: BaseMenuControls, Assembly-CSharp
+        m_MethodName: PressedExit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3505,9 +3475,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7082323743385111909}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
-        m_MethodName: PressedNextLevel
+      - m_Target: {fileID: 7082323744428080792}
+        m_TargetAssemblyTypeName: InGameMenuControls, Assembly-CSharp
+        m_MethodName: PressedStart
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3665,8 +3635,8 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7082323743385111909}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
+      - m_Target: {fileID: 7082323744428080792}
+        m_TargetAssemblyTypeName: BaseMenuControls, Assembly-CSharp
         m_MethodName: AudioVolume
         m_Mode: 4
         m_Arguments:
@@ -4207,6 +4177,7 @@ GameObject:
   - component: {fileID: 7082323744428080784}
   - component: {fileID: 7082323744428080791}
   - component: {fileID: 7082323744428080790}
+  - component: {fileID: 7082323744428080792}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: MainCanvas
@@ -4285,6 +4256,28 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 0
+--- !u!114 &7082323744428080792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7082323744428080788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16ef54fb2b0924b4eb510207c4f0842a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MenuPanel: {fileID: 7082323742687264163}
+  SettingsPanel: {fileID: 7082323744206747448}
+  isFullScreen: 0
+  Audio: {fileID: 24100000, guid: 6f08d042497ad0940880a2323e3fb413, type: 2}
+  sorceAud: {fileID: 7082323743673034733}
+  muz1: {fileID: 8300000, guid: c88eeb2151c713b49a98191685ff87b0, type: 3}
+  muz2: {fileID: 8300000, guid: 6549aef3c5740f841909b8fcd8729edc, type: 3}
+  sceneManager: {fileID: 11400000, guid: 9145aa94d992bd447b610275e5bc38f2, type: 2}
+  NextLevelMenuPanel: {fileID: 7082323743570173584}
+  BackMenuPanel: {fileID: 7082323743597317172}
 --- !u!222 &7082323744438516400
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4377,8 +4370,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7082323743385111909}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
+      - m_Target: {fileID: 7082323744428080792}
+        m_TargetAssemblyTypeName: InGameMenuControls, Assembly-CSharp
         m_MethodName: PressedStart
         m_Mode: 1
         m_Arguments:
@@ -4542,8 +4535,8 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
+      - m_Target: {fileID: 7082323744428080792}
+        m_TargetAssemblyTypeName: BaseMenuControls, Assembly-CSharp
         m_MethodName: FullScreenToggle
         m_Mode: 1
         m_Arguments:
@@ -4639,8 +4632,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7082323743385111909}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
+      - m_Target: {fileID: 7082323744428080792}
+        m_TargetAssemblyTypeName: BaseMenuControls, Assembly-CSharp
         m_MethodName: PressedSettings
         m_Mode: 1
         m_Arguments:

@@ -20,7 +20,7 @@ public class GameController : MonoBehaviour
     public int Rows = 0;
     // public Image Bar;
     
-    public MenuControls Menu;
+    public BaseMenuControls Menu;
     public Text LvlInfo;
     // public UIController EnemyHitBarPref;
     
@@ -31,13 +31,13 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private MapGenerator mapGenerator;
     [SerializeField]
-    private Material[] materials;
+    private CellMaterials cellMaterials;
     [SerializeField]
     private GameMenuConstants gameMenuConstants;
     [SerializeField]
     private SceneManager sceneManager;
 
-    private List<BaseCell> neighbors;
+    //private List<BaseCell> neighbors;
     private Vector2Int playerPositionInMap;
     private PlayersProgress playerProgress;
     private string filePath => Application.persistentDataPath + @"\ProgressData";
@@ -47,50 +47,30 @@ public class GameController : MonoBehaviour
     private Map map;
 
 
-
-
-
-    
-
-    void Awake()
-    {
-        //filePath = Application.persistentDataPath + @"\ProgressData";
-    }
-
     void Start()
     {
-        //Menu.StartClicked += OnStartClicked;
+        //Menu.StartClicked += OnStartClicked; //// subcribe on click start not needed
         StartLevel();
     }
 
     private void StartLevel()
     {
-
         ClearTheMap();
-        ////////////////////        
+      
         LoadProgress();
-      //  LvlInfo.text = "Lvl:" + playerProgress.Lvl;
 
-        UIController.DeActivateGameOverTextBar();
+        UIController.ReInit();
 
-        //HexCells = mGenerator.MapCreate1(Rows, Columns, mGenerator.transform, player, playerProgress.Lvl);
         map = mapGenerator.MapGenerate(Rows, Columns, player, playerProgress.Lvl);
 
-        map.StartCell.SetMaterial(materials[6]);
-        neighbors = map.GetAvailableCells(map.StartCell);
-        foreach (var neighbor in neighbors)
+        map.StartCell.SetMaterial(cellMaterials.GetMaterial(CellMaterials.MaterialNames.StartMaterial));
+
+        foreach (var neighbor in map.GetAvailableCells(map.StartCell))
         {
-            neighbor.SetMaterial(materials[1]);
+            neighbor.SetMaterial(cellMaterials.GetMaterial(CellMaterials.MaterialNames.Unlocked));
         }
 
-        player.SetHitDamagePoints();
-        UpdatePlayerInformation();
-
-        player.RelocateInstantly(map.StartCell.transform.position);
-        playerPositionInMap = map.StartCell.CellIndex;
-
-        var animPlayer = player.GetComponentInChildren<Animator>();
-        damageAnimSTM = animPlayer.GetBehaviour<DamageSTM>();
+        InitPlayer();
 
         map.CellClicked += OnCellClicked;
         map.ContentShown += UIController.ViewContentInformation;
@@ -99,9 +79,9 @@ public class GameController : MonoBehaviour
         PrevCell = map.StartCell;
     }
 
-    void ClearTheMap()
+
+    public void ClearTheMap()
     {
-        //clear the map
         if (mapGenerator is null) return;
         mapGenerator.Clear();
     }
@@ -124,11 +104,6 @@ public class GameController : MonoBehaviour
         }
     }
 
-
-
-
-   
-
     public void GetHealToOpenEnemies(int healpoints)
     {
         foreach (Enemy enemy in map.OpenEnemy)
@@ -141,6 +116,18 @@ public class GameController : MonoBehaviour
     {
         System.Random rnd = new System.Random();
         return rnd.Next(1, 3); //1-DD, 2-Healer, 3-Tank
+    }
+
+    private void InitPlayer()
+    {
+        player.SetHitDamagePoints();
+        UpdatePlayerInformation();
+
+        player.RelocateInstantly(map.StartCell.transform.position);
+        playerPositionInMap = map.StartCell.CellIndex;
+
+        var animPlayer = player.GetComponentInChildren<Animator>();
+        damageAnimSTM = animPlayer.GetBehaviour<DamageSTM>();
     }
 
     private void CheckPlayerDeath()
@@ -242,7 +229,7 @@ public class GameController : MonoBehaviour
             if (cellClicked == map.EndCell)// вынести в класс 2карта", и сделать подпиской
             {
                 player.Relocation(cellClicked.transform.position);
-                cellClicked.SetMaterial(materials[5]);
+                cellClicked.SetMaterial(cellMaterials.GetMaterial(CellMaterials.MaterialNames.EndMaterial));
                 playerProgress.Lvl++;
                 UIController.ShowPlayerHP(player);
                 //var text = "You Win!";
@@ -303,8 +290,8 @@ public class GameController : MonoBehaviour
     private void SetNeighbornsMaterial(BaseCell cellClicked) //incapsulate to Map class
     {
 
-        neighbors = map.GetAvailableCells(cellClicked);
-        foreach (var neighbor in neighbors)
+        //neighbors = map.GetAvailableCells(cellClicked);
+        foreach (var neighbor in map.GetAvailableCells(cellClicked))
         {
            // var empty = (EmptyCell)neighbor;
 
@@ -317,7 +304,7 @@ public class GameController : MonoBehaviour
             //  neighbor.SetMaterial(materials[5]);
             // continue;
             //  } 
-            neighbor.SetMaterial(materials[1]);
+            neighbor.SetMaterial(cellMaterials.GetMaterial(CellMaterials.MaterialNames.Unlocked));
         }
     }
 
@@ -325,7 +312,7 @@ public class GameController : MonoBehaviour
     private void ActivateCellMaterial(BaseCell cellClicked)
     {
 
-        cellClicked.SetMaterial(materials[4]);
+        cellClicked.SetMaterial(cellMaterials.GetMaterial(CellMaterials.MaterialNames.EmptyMaterial));
     }
 
     private BaseCell OnCellActivated(BaseCell cellClicked, BaseCell PrevCell) // is not  subscribtion to event
@@ -348,10 +335,10 @@ public class GameController : MonoBehaviour
         //cellClicked.Activate();
     }
 
-    private void SetLockedMaterial(BaseCell PrevCell, BaseCell cellClicked) //its MAP
+    private void SetLockedMaterial(BaseCell prevCell, BaseCell cellClicked) //its MAP
     {
-        neighbors = map.GetAvailableCells(PrevCell);
-        foreach (var neighbor in neighbors)
+        //var neighbors = map.GetAvailableCells(PrevCell);
+        foreach (var neighbor in map.GetAvailableCells(prevCell))
         {
            // var empty = (EmptyCell)neighbor;
 
@@ -359,7 +346,7 @@ public class GameController : MonoBehaviour
             if (neighbor.CellType == CellType.StartCell) continue;
             if (neighbor == cellClicked) continue;
 
-            neighbor.SetMaterial(materials[0]);
+            neighbor.SetMaterial(cellMaterials.GetMaterial(CellMaterials.MaterialNames.Locked));
         }
 
     }

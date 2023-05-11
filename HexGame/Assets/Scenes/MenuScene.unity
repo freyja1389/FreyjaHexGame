@@ -160,7 +160,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 627.5779, y: -477.9114}
+  m_AnchoredPosition: {x: 654.33435, y: -460.8226}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &49057890
@@ -207,8 +207,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 180220514}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
+      - m_Target: {fileID: 1283850645}
+        m_TargetAssemblyTypeName: BaseMenuControls, Assembly-CSharp
         m_MethodName: PressedBackSettings
         m_Mode: 1
         m_Arguments:
@@ -1158,8 +1158,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 180220514}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
+      - m_Target: {fileID: 1283850645}
+        m_TargetAssemblyTypeName: BaseMenuControls, Assembly-CSharp
         m_MethodName: PressedExit
         m_Mode: 1
         m_Arguments:
@@ -1395,7 +1395,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 627.5779, y: -357.9114}
+  m_AnchoredPosition: {x: 654.33435, y: -340.8226}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1239606431
@@ -1478,7 +1478,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 627.5779, y: -387.9114}
+  m_AnchoredPosition: {x: 654.33435, y: -370.8226}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1242980194
@@ -1528,8 +1528,8 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
+      - m_Target: {fileID: 1283850645}
+        m_TargetAssemblyTypeName: BaseMenuControls, Assembly-CSharp
         m_MethodName: FullScreenToggle
         m_Mode: 1
         m_Arguments:
@@ -1662,9 +1662,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 180220514}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
-        m_MethodName: PressedBackSettings
+      - m_Target: {fileID: 1283850645}
+        m_TargetAssemblyTypeName: BaseMenuControls, Assembly-CSharp
+        m_MethodName: PressedSettings
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1724,6 +1724,7 @@ GameObject:
   - component: {fileID: 1283850644}
   - component: {fileID: 1283850643}
   - component: {fileID: 1283850642}
+  - component: {fileID: 1283850645}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: MainCanvas
@@ -1745,9 +1746,8 @@ RectTransform:
   m_Children:
   - {fileID: 625296040}
   - {fileID: 1538574397}
-  - {fileID: 2072451304}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1815,6 +1815,26 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1283850645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283850640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0d1110d63839fd4f8ad0da22d092e05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MenuPanel: {fileID: 625296039}
+  SettingsPanel: {fileID: 1538574396}
+  isFullScreen: 0
+  Audio: {fileID: 24100000, guid: 6f08d042497ad0940880a2323e3fb413, type: 2}
+  sorceAud: {fileID: 2072451305}
+  muz1: {fileID: 8300000, guid: c88eeb2151c713b49a98191685ff87b0, type: 3}
+  muz2: {fileID: 8300000, guid: 6549aef3c5740f841909b8fcd8729edc, type: 3}
+  sceneManager: {fileID: 11400000, guid: 9145aa94d992bd447b610275e5bc38f2, type: 2}
 --- !u!1 &1307002288
 GameObject:
   m_ObjectHideFlags: 0
@@ -1899,7 +1919,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 180220514}
+      - m_Target: {fileID: 1283850645}
         m_TargetAssemblyTypeName: MainMenuControls, Assembly-CSharp
         m_MethodName: PressedStart
         m_Mode: 1
@@ -2247,7 +2267,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 627.5779, y: -447.9114}
+  m_AnchoredPosition: {x: 654.33435, y: -430.8226}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1671855799
@@ -2301,10 +2321,10 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
+      - m_Target: {fileID: 1283850645}
+        m_TargetAssemblyTypeName: BaseMenuControls, Assembly-CSharp
         m_MethodName: AudioVolume
-        m_Mode: 0
+        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2348,7 +2368,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 627.5779, y: -417.9114}
+  m_AnchoredPosition: {x: 654.33435, y: -400.8226}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1838815328
@@ -2569,17 +2589,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2072451303}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.72974926, y: 0.72974926, z: 0.72974926}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1283850641}
-  m_RootOrder: 2
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 806.9164, y: 494.28912}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!82 &2072451305

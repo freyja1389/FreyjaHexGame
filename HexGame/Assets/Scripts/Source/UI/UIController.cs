@@ -106,7 +106,7 @@ public class UIController : MonoBehaviour
         PlayersDMGTextBox.text = "Player's DMG: " + player.DmgPoints;
     }
 
-    public void ShowWinLooseInformation(string winLooseText)
+    public void ShowWinLooseInformation(string winLooseText) //remove scrobj into UI controller , use bool to get ifo from scrobj
     {
         //var instGameOverText = Instantiate(GameOverTextBar, new Vector3(0, 184, 0), Quaternion.identity);
         //var canv = GameObject.FindGameObjectWithTag("MainCanvas");
@@ -116,7 +116,7 @@ public class UIController : MonoBehaviour
         GameOverTextBar.gameObject.SetActive(true);
     }
 
-    public void DeActivateGameOverTextBar()
+    public void ReInit()
     {
         GameOverTextBar.gameObject.SetActive(false);
     }

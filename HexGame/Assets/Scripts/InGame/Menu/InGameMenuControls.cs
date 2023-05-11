@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class InGameMenuControls : MenuControls
+public class InGameMenuControls : BaseMenuControls
 {
     public GameObject NextLevelMenuPanel;
     public GameObject BackMenuPanel;
@@ -33,7 +33,7 @@ public class InGameMenuControls : MenuControls
 
     public void BackToMenu()
     {
-        BackMenuPanel.SetActive(false);
+        BackMenuPanel.SetActive(false);        
         ActivateMenuPanel(true);
     }
 }

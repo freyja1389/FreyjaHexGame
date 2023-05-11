@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 389d4e55ae022d14589200fe63361b66, type: 3}
+  m_Name: CellMaterials
+  m_EditorClassIdentifier: 
+  NamedMaterials:
+  - Name: 0
+    Material: {fileID: 0}
+  - Name: 1
+    Material: {fileID: 2100000, guid: 66b5ba44cd2dac14b85b5b40a2b33861, type: 2}
+  - Name: 2
+    Material: {fileID: 2100000, guid: 6345f2b9ed1d8df4aa4b15f3cf1e6d40, type: 2}
+  - Name: 3
+    Material: {fileID: 2100000, guid: aeb14df3bd3213b4584807444d11324d, type: 2}
+  - Name: 4
+    Material: {fileID: 2100000, guid: 933d0ec16a2599a4aba8b7b6e748e90a, type: 2}
+  - Name: 5
+    Material: {fileID: 2100000, guid: 397df88b9dc3f8843bc652e5a0b61555, type: 2}
+  - Name: 6
+    Material: {fileID: 2100000, guid: 6b5af0c190fab61418f29af8099d38f6, type: 2}
+  - Name: 7
+    Material: {fileID: 2100000, guid: 0a239bb40b8bae046bb654e6b53ded33, type: 2}
