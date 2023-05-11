@@ -6,18 +6,17 @@ using UnityEngine;
 public class BaseCell : MonoBehaviour
 {
     public event Action<BaseCell> CellClicked;
-    public Vector2Int CellIndex;
-    public bool Open;
-
     public event Action<BaseCell> ShownContent;
 
-    public CellType CellType;
-
     public bool Opened;
+    public bool Open;
+
+    public Vector2Int CellIndex;
+    public CellType CellType;
 
     public CellContent ContentLink;
 
-    private CellContent ContentPrefab;
+    private CellContent contentPrefab;
 
     public void Activate()
     {
@@ -46,7 +45,7 @@ public class BaseCell : MonoBehaviour
 
     public void SetContentPrefab(CellContent prefab)
     {
-        ContentPrefab = prefab;
+        contentPrefab = prefab;
     }
 
     public void OnCellClicked()
@@ -60,7 +59,7 @@ public class BaseCell : MonoBehaviour
         {
             case CellType.EnemyCell:
                 {
-                    var enemy = Instantiate((Enemy)ContentPrefab, transform.position, transform.rotation, transform);
+                    var enemy = Instantiate((Enemy)contentPrefab, transform.position, transform.rotation, transform);
                     // UIController enemyBar = Instantiate(enemy.EnemyHitBarPref, new Vector3(transform.position.x, 1, transform.position.z), Quaternion.Euler(90, 0, 0), wSCanvas.transform);
                     ContentLink = enemy;
                     enemy.ContentClicked += OnCellClicked;
@@ -72,7 +71,7 @@ public class BaseCell : MonoBehaviour
                 break;
             case CellType.BonusCell:
                 {
-                    Bonus bonus = Instantiate((Bonus)ContentPrefab, transform.position, transform.rotation, transform);
+                    Bonus bonus = Instantiate((Bonus)contentPrefab, transform.position, transform.rotation, transform);
                     ContentLink = bonus;
                     Opened = true;
                     // bonus.ContentClicked += OnContentClicked;
