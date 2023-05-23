@@ -199,8 +199,6 @@ public class GameController : MonoBehaviour
         player.transform.LookAt(cellClicked.transform.position);
 
 
-        //var emptyCell = (EmptyCell)cellClicked;
-
         if (!cellClicked.Opened)
         {
             cellClicked.Opened = true;
@@ -209,16 +207,11 @@ public class GameController : MonoBehaviour
             if (cellClicked.ContentLink is Bonus bonus)
             {
                 bonus.ParentCell = cellClicked;
-                //bonus.MoveBonusIntoBonusCell += MoveBonusIntoBonusCell;
             }
             else if (cellClicked.ContentLink is Enemy enemy)
             {
-                // damageAnimSTM.DamageAnimationComplete += enemy.CheckEnemyDeath;
-                //player.CheckEnemyDeath += enemy.CheckEnemyDeath;
-                //enemy.EnemyAlive += player.SetDamageWithAnimation;
                 enemy.EnemyAttackStarted += player.SetDamageAnimation;
                 enemy.EnemyAttackCompleted += player.SetDamage;
-
             }
             if (cellClicked.ContentLink is not null) return;
         }
@@ -228,21 +221,16 @@ public class GameController : MonoBehaviour
             cellClicked.Opened = true;
             if (cellClicked == map.EndCell)// вынести в класс 2карта", и сделать подпиской
             {
+                player.PlayerRelocated += OnWin;
                 player.Relocation(cellClicked.transform.position);
                 cellClicked.SetMaterial(cellMaterials.GetMaterial(CellMaterials.MaterialNames.EndMaterial));
                 playerProgress.Lvl++;
                 UIController.ShowPlayerHP(player);
-                //var text = "You Win!";
-                UIController.ShowWinLooseInformation(gameMenuConstants.WinMessage);
-                UIController.NextLevelMenuSpawn();
-                SaveProgress();
-
             }
             else
             {
                 PrevCell = OnCellActivated(cellClicked, PrevCell);
             }
-            //return;
         }
         else
         {
@@ -250,6 +238,13 @@ public class GameController : MonoBehaviour
         }
 
         map.OpenEnemyOnCellClicked();
+    }
+
+    private void OnWin()
+    {
+        UIController.ShowWinLooseInformation(gameMenuConstants.WinMessage);
+        UIController.NextLevelMenuSpawn();
+        SaveProgress();
     }
 
 
@@ -295,7 +290,7 @@ public class GameController : MonoBehaviour
         {
            // var empty = (EmptyCell)neighbor;
 
-            if (neighbor.CellType == CellType.StartCell)//StartCell
+            if (neighbor.ContentType == CellType.StartCell)//StartCell
             {
                 continue;
             }
@@ -343,7 +338,7 @@ public class GameController : MonoBehaviour
            // var empty = (EmptyCell)neighbor;
 
             if (neighbor.Open) continue;
-            if (neighbor.CellType == CellType.StartCell) continue;
+            if (neighbor.ContentType == CellType.StartCell) continue;
             if (neighbor == cellClicked) continue;
 
             neighbor.SetMaterial(cellMaterials.GetMaterial(CellMaterials.MaterialNames.Locked));

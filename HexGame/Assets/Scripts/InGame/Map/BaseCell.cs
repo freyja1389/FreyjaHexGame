@@ -12,11 +12,11 @@ public class BaseCell : MonoBehaviour
     public bool Open;
 
     public Vector2Int CellIndex;
-    public CellType CellType;
+    public CellType ContentType;
 
     public CellContent ContentLink;
 
-    private CellContent contentPrefab;
+   // private CellContent contentPrefab;
 
     public void Activate()
     {
@@ -43,9 +43,14 @@ public class BaseCell : MonoBehaviour
         GetComponentInChildren<MeshRenderer>().material = material;
     }
 
-    public void SetContentPrefab(CellContent prefab)
+   //public void SetContentPrefab(CellContent prefab)
+   // {
+     //   contentPrefab = prefab;
+   // }
+
+    public void SetContentLink(CellContent contentLink)
     {
-        contentPrefab = prefab;
+        ContentLink = contentLink;
     }
 
     public void OnCellClicked()
@@ -55,34 +60,18 @@ public class BaseCell : MonoBehaviour
 
     internal void ShowContent()
     {
-        switch (CellType)
-        {
-            case CellType.EnemyCell:
-                {
-                    var enemy = Instantiate((Enemy)contentPrefab, transform.position, transform.rotation, transform);
-                    // UIController enemyBar = Instantiate(enemy.EnemyHitBarPref, new Vector3(transform.position.x, 1, transform.position.z), Quaternion.Euler(90, 0, 0), wSCanvas.transform);
-                    ContentLink = enemy;
-                    enemy.ContentClicked += OnCellClicked;
-                    //OpenEnemy.Add(enemy);
-                    //enemyBar.ChangeEnemyHitBarFillAmount(enemy.HitPoints);
-                    // enemy.HitBar = enemyBar;
-                    //uIController.ViewEnemyInformation(enemy, this, wSCanvas);
-                }
-                break;
-            case CellType.BonusCell:
-                {
-                    Bonus bonus = Instantiate((Bonus)contentPrefab, transform.position, transform.rotation, transform);
-                    ContentLink = bonus;
-                    Opened = true;
-                    // bonus.ContentClicked += OnContentClicked;
-                }
-                break;
-            case CellType.EndCell:
-                {
-
-                }
-                break;
-        }
+        if (ContentLink is null) return;
+        Opened = true;
+        ContentLink.ChangeContentState(true); ; // инкапсулировать ++
         ShownContent?.Invoke(this);
+    }
+
+    public void InstantiateContentPrefab(CellContent prefab)
+    {
+        var content = Instantiate(prefab, transform.position, transform.rotation, transform);
+        content.ChangeContentState(false);                                                                                                               // TO DO incapsulate
+        SetContentLink(content);                                                                                                                        // TO DO celltype is needed???if not - delete, incapsulate this function into basecell (parameter - prefab, celltype??? if needed - rename to content type) 
+        content.ContentClicked += OnCellClicked;
+
     }
 }

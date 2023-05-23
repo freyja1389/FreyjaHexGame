@@ -22,9 +22,10 @@ public class Player : MonoBehaviour
     public Enemy InteractionEnemyLink;
 
     public event Action <Animator, Player> CheckEnemyDeath;
+    public event Action PlayerRelocated;
 
    // public event Action AttackAnimationPlayedCountinue;
-    //public event Action DamageAnimationPlayedCountinue;
+   //public event Action DamageAnimationPlayedCountinue;
 
 
     public void Update()
@@ -150,6 +151,7 @@ public class Player : MonoBehaviour
             yield return null;
         }
        anim.SetTrigger("Idle");
+        PlayerRelocated?.Invoke();
     }
     
     public void Relocation(Vector3 vector)

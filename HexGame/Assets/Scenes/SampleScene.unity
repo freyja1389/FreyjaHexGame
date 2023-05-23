@@ -374,7 +374,7 @@ MonoBehaviour:
   ButtonBonusHealer: {fileID: 4119295609690827031, guid: 45ede629e879f4d4c92d9cf692ee35d3, type: 3}
   ItemsPanel: {fileID: 7082323743023956012}
   BonusButtons: []
-  MenuControls: {fileID: 0}
+  MenuControls: {fileID: 7082323744428080792}
 --- !u!1 &912755150
 GameObject:
   m_ObjectHideFlags: 0

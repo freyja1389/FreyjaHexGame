@@ -56,5 +56,11 @@ public class CellContent : MonoBehaviour
     {
 
     }
+
+    public void ChangeContentState(bool value)
+    {
+        gameObject.SetActive(value);
+    }
+
 }
  

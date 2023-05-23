@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using System;
+//using System;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -200,28 +200,55 @@ public class MapGenerator : MonoBehaviour
         return spawnedNeighbours;
     }*/
 
-    private void SetContentPrefab(BaseCell cell)
+    /*private void SetContentPrefab(BaseCell cell)
     {
-        if (cell.CellType == CellType.StartCell || cell.CellType == CellType.EndCell) return;
-        System.Random rnd = new System.Random();
-        int value = rnd.Next(0, 3); //1 - bonus, 2 - enemy, 0 - empty
-        if (value == 1)
+        if (cell.ContentType == CellType.StartCell || cell.ContentType == CellType.EndCell) return;
+       
+        int value = Random.Range(0, 3); //1 - bonus, 2 - enemy, 0 - empty
+        if (value == 1)                                                                                                                                         //TO DO if => switch case
         {
-            cell.CellType = CellType.BonusCell;//BonusCell
-            cell.SetContentPrefab(CellsContent[CheckTypeOfBonus()]);
+            cell.ContentType = CellType.BonusCell;//BonusCell
+            var content = Instantiate(CellsContent[CheckTypeOfBonus()], transform.position, transform.rotation, transform);
+            content.gameObject.SetActive(false);
+            cell.SetContentLink(content);
         }
         else if (value == 2)
         {
-            cell.CellType = CellType.EnemyCell;//EnemyCell
-            cell.SetContentPrefab(CellsContent[CheckTypeOfEnemy()]);
+            cell.ContentType = CellType.EnemyCell;//EnemyCell
+            var content = Instantiate(CellsContent[CheckTypeOfEnemy()], transform.position, transform.rotation, transform);
+            content.gameObject.SetActive(false);                                                                                                                 // TO DO incapsulate
+            cell.SetContentLink(content);                                                                                                                        // TO DO celltype is needed???if not - delete, incapsulate this function into basecell (parameter - prefab, celltype??? if needed - rename to content type) 
+            content.ContentClicked += cell.OnCellClicked;
         }
         else
         {
-            cell.CellType = CellType.EmptyCell;//Empty 
+            cell.ContentType = CellType.EmptyCell;//Empty 
         }
+    }*/
+
+    private void SetContentPrefab(BaseCell cell)
+    {
+        if (cell.ContentType == CellType.StartCell || cell.ContentType == CellType.EndCell) return;
+
+        int value = Random.Range(0, 3); //1 - bonus, 2 - enemy, 0 - empty
+
+        switch(value)
+        {
+            case 1:
+                cell.ContentType = CellType.BonusCell;//BonusCell
+                cell.InstantiateContentPrefab(CellsContent[CheckTypeOfBonus()]);
+                break;
+            case 2:
+                cell.ContentType = CellType.EnemyCell;//EnemyCell
+                cell.InstantiateContentPrefab(CellsContent[CheckTypeOfEnemy()]);
+                break;
+            default:
+                cell.ContentType = CellType.EmptyCell;//Empty
+                break;
+        }     
     }
 
-    public Map MapGenerate(int rows, int columns, Player player, int lvl)
+        public Map MapGenerate(int rows, int columns, Player player, int lvl)
     {
         //int lvlkoeff = (int)Mathf.Round(lvl / 2);
         //rows = rows + lvlkoeff;
@@ -321,7 +348,7 @@ public class MapGenerator : MonoBehaviour
             endElem = GetRandomElementOfMap(map);
         }
 
-         startElem.CellType = CellType.StartCell;
+         startElem.ContentType = CellType.StartCell;
         if (gController.player == null)
         {
             var playerInst = Instantiate(PlayerPrefab, startElem.transform.position, transform.rotation);
@@ -338,7 +365,7 @@ public class MapGenerator : MonoBehaviour
         startCell = startElem;
         startElem.name = "StartCell" + startElem.CellIndex;
 
-        endElem.CellType = CellType.EndCell;
+        endElem.ContentType = CellType.EndCell;
         endCell = endElem;
         endElem.name = "EndCell" + endElem.CellIndex;
     }
@@ -379,7 +406,7 @@ public class MapGenerator : MonoBehaviour
         }
         else
         {*/
-        cell.CellType = CellType.EmptyCell;
+        cell.ContentType = CellType.EmptyCell;
         // }
         return cell;
     }
