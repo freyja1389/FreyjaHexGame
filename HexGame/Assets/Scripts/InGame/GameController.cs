@@ -39,7 +39,8 @@ public class GameController : MonoBehaviour
 
     //private List<BaseCell> neighbors;
     private Vector2Int playerPositionInMap;
-    private PlayersProgress playerProgress;
+    private PlayersProgress _playerProgress;
+    public PlayersProgress playerProgress { get { return _playerProgress;  }}
     private string filePath => Application.persistentDataPath + @"\ProgressData";
     private BaseCell PrevCell;
     
@@ -61,7 +62,7 @@ public class GameController : MonoBehaviour
 
         UIController.ReInit();
 
-        map = mapGenerator.MapGenerate(Rows, Columns, player, playerProgress.Lvl);
+        map = mapGenerator.MapGenerate(Rows, Columns, player, _playerProgress.Lvl);
 
         map.StartCell.SetMaterial(cellMaterials.GetMaterial(CellMaterials.MaterialNames.StartMaterial));
 
@@ -93,14 +94,16 @@ public class GameController : MonoBehaviour
         if(content is Enemy enemy)
         {
             enemy.StateChanged += UIController.UpdateEnemyTextInfo;
+            enemy.EnemyAttackCompleted += CheckPlayerDeath;
+           // enemy.EnemyAttackCompleted += player.SetAttackAnimation;
         }
-        content.OnContentClicked(player, map.OpenEnemy, clickedCell);//rename its not event!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        content.OnContentClicked(player, map.OpenEnemy, clickedCell);   //rename its not event!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        CheckPlayerDeath();
+        //CheckPlayerDeath();
 
         if (clickedCell.gameObject is null)
         {
-            PrevCell = OnCellActivated(clickedCell, PrevCell); //rename its not event - if dead - why execute?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            PrevCell = OnCellActivated(clickedCell, PrevCell);         //rename its not event - if dead - why execute?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         }
     }
 
@@ -130,13 +133,12 @@ public class GameController : MonoBehaviour
         damageAnimSTM = animPlayer.GetBehaviour<DamageSTM>();
     }
 
-    private void CheckPlayerDeath()
+    private void CheckPlayerDeath(int dmg)
     {
         if (player.HitPoints <= 0)
         {
             UIController.ShowPlayerHP(player);
-            //var text = "Game Over!";
-            UIController.ShowWinLooseInformation(gameMenuConstants.LooseMessage);
+            OnLoose();
         }
     }
 
@@ -144,14 +146,6 @@ public class GameController : MonoBehaviour
     {
         player.Relocation(cell.transform.position);
     }
-
-    /*public void OnContentShown(CellContent content)
-    {
-        if (content is Enemy enemy)
-        {
-            OpenEnemy.Add(enemy); //- relocated to Map CellShownContent func
-        }
-    }*/
 
     public void OnUseBonus(Bonus bonus, ItemSlot button)
     {
@@ -224,7 +218,7 @@ public class GameController : MonoBehaviour
                 player.PlayerRelocated += OnWin;
                 player.Relocation(cellClicked.transform.position);
                 cellClicked.SetMaterial(cellMaterials.GetMaterial(CellMaterials.MaterialNames.EndMaterial));
-                playerProgress.Lvl++;
+                _playerProgress.Lvl++;
                 UIController.ShowPlayerHP(player);
             }
             else
@@ -247,12 +241,16 @@ public class GameController : MonoBehaviour
         SaveProgress();
     }
 
-
-
-    public void OnStartClicked() //  ////////////////////////////////////////
+    private void OnLoose()
     {
-       // Menu.ActivateMenuPanel(false);
-       // Menu.ActivateBackMenuPanel(true);
+        UIController.ShowWinLooseInformation(gameMenuConstants.LooseMessage);
+        UIController.NextLevelMenuSpawn();
+    }
+
+
+
+    public void OnStartClicked()
+    { 
         StartLevel();
     }
 
@@ -261,7 +259,7 @@ public class GameController : MonoBehaviour
         var formatter = new BinaryFormatter();
 
         using var stream = new FileStream(filePath, FileMode.Create);
-        formatter.Serialize(stream, playerProgress);
+        formatter.Serialize(stream, _playerProgress);
     }
 
     private void LoadProgress()
@@ -270,12 +268,12 @@ public class GameController : MonoBehaviour
 
         if (!File.Exists(filePath))
         {
-            playerProgress = new PlayersProgress();
+            _playerProgress = new PlayersProgress();
             return;
         }
 
         using var stream = new FileStream(filePath, FileMode.Open);
-        playerProgress = (PlayersProgress)formatter.Deserialize(stream);
+        _playerProgress = (PlayersProgress)formatter.Deserialize(stream);
     }
 
     

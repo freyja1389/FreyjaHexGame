@@ -32,8 +32,28 @@ public class MapGenerator : MonoBehaviour
     }
     private int CheckTypeOfEnemy()
     {
+        int result = 0;
+        var playerLvl = gController.playerProgress.Lvl;
+        var complexity = playerLvl / 100;
         System.Random rnd = new System.Random();
-        return rnd.Next(0, 3); //1-DD, 2-Healer, 3-Tank
+      
+        var value = rnd.Next(0, 1000);
+        //1-DD, 2-Healer, 3-Tank
+
+        if (value <= 1000 * complexity)
+        {
+            result = 2;
+        }
+        else if (value <= (1000 * complexity)/2)
+        {
+            result = 3;
+        }
+        else 
+        {
+            result = 1;
+        }
+
+        return result;
     }
 
     private int CheckTypeOfBonus()
@@ -228,7 +248,7 @@ public class MapGenerator : MonoBehaviour
 
     private void SetContentPrefab(BaseCell cell)
     {
-        if (cell.ContentType == CellType.StartCell || cell.ContentType == CellType.EndCell) return;
+        if (cell.ContentType == CellType.StartCell | cell.ContentType == CellType.EndCell) return;
 
         int value = Random.Range(0, 3); //1 - bonus, 2 - enemy, 0 - empty
 
@@ -364,10 +384,12 @@ public class MapGenerator : MonoBehaviour
 
         startCell = startElem;
         startElem.name = "StartCell" + startElem.CellIndex;
+        startElem.ContentLink = null;
 
         endElem.ContentType = CellType.EndCell;
         endCell = endElem;
         endElem.name = "EndCell" + endElem.CellIndex;
+        endElem.ContentLink = null;
     }
 
     private BaseCell GetRandomElementOfMap(BaseCell[,] map)
