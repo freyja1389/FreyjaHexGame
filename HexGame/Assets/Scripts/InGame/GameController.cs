@@ -21,7 +21,7 @@ public class GameController : MonoBehaviour
     // public Image Bar;
     
     public BaseMenuControls Menu;
-    public Text LvlInfo;
+
     // public UIController EnemyHitBarPref;
     
     public Canvas UICanvas;
@@ -61,6 +61,8 @@ public class GameController : MonoBehaviour
         LoadProgress();
 
         UIController.ReInit();
+
+        UIController.UpdateLvlInfo(playerProgress.Lvl);
 
         map = mapGenerator.MapGenerate(Rows, Columns, player, _playerProgress.Lvl);
 
@@ -126,7 +128,7 @@ public class GameController : MonoBehaviour
         player.SetHitDamagePoints();
         UpdatePlayerInformation();
 
-        player.RelocateInstantly(map.StartCell.transform.position);
+        player.RelocateInstantly(new Vector3(map.StartCell.transform.position.x, map.StartCell.transform.position.y+0.1f, map.StartCell.transform.position.z));
         playerPositionInMap = map.StartCell.CellIndex;
 
         var animPlayer = player.GetComponentInChildren<Animator>();
@@ -237,14 +239,14 @@ public class GameController : MonoBehaviour
     private void OnWin()
     {
         UIController.ShowWinLooseInformation(gameMenuConstants.WinMessage);
-        UIController.NextLevelMenuSpawn();
+        UIController.NextLevelMenuSpawn(true);
         SaveProgress();
     }
 
     private void OnLoose()
     {
         UIController.ShowWinLooseInformation(gameMenuConstants.LooseMessage);
-        UIController.NextLevelMenuSpawn();
+        UIController.NextLevelMenuSpawn(false);
     }
 
 

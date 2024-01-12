@@ -1,15 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 
 public class InGameMenuControls : BaseMenuControls
 {
+    [SerializeField]
+    private TMPro.TextMeshProUGUI nextLevelMenuButtonText;
+
     public GameObject NextLevelMenuPanel;
     public GameObject BackMenuPanel;
 
-
     public event Action StartClicked;
+
+    public void ChangeNextLevelMenuButtonText(string text)
+    {
+        nextLevelMenuButtonText.text = text;
+    }
     public void BackToGame()
     {
         BackMenuPanel.SetActive(true);

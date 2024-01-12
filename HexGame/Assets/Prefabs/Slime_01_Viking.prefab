@@ -288,8 +288,9 @@ MonoBehaviour:
   PlayerInstance: {fileID: 0}
   Lvl: 0
   Bonuses: []
-  uicontroller: {fileID: 0}
+  UIController: {fileID: 0}
   hitPoints: 0
+  InteractionEnemyLink: {fileID: 0}
 --- !u!1 &7588663013591350367
 GameObject:
   m_ObjectHideFlags: 0

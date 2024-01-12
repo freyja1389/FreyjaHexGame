@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System;
 
 
-public class Enemy : CellContent
+public class Enemy : CellContent, IFighter
 {
     public int DmgPoints;
     public int CurrentHitPoints { get; protected set; }
@@ -22,6 +22,7 @@ public class Enemy : CellContent
     private DamageSTM damageAnimSTM;
     private AttackSTM attackAnimSTM;
     private DieSTM dieAnimSTM;
+    private bool isAttackable;
 
 
     //public Action <CellContent> ReadyForDestroy;
@@ -33,10 +34,11 @@ public class Enemy : CellContent
         attackAnimSTM = anim.GetBehaviour<AttackSTM>();
         damageAnimSTM = anim.GetBehaviour<DamageSTM>();
         dieAnimSTM = anim.GetBehaviour<DieSTM>();
+        isAttackable = true;
 
         damageAnimSTM.DamageAnimationComplete += SetAttackAnimation;
         attackAnimSTM.AttackAnimationStarted+= RiseAttackStarted;
-        attackAnimSTM.AttackAnimationComplete += RiseAttacCompleted;
+        attackAnimSTM.AttackAnimationComplete += RiseAttackCompleted;
         dieAnimSTM.DieAnimationComplete += OnDieAnimationComplete;
 
     }
@@ -59,10 +61,11 @@ public class Enemy : CellContent
         EnemyAttackStarted?.Invoke(DmgPoints);
     }
 
-    private void RiseAttacCompleted(Animator animator)
+    private void RiseAttackCompleted(Animator animator)
     {
         if (!animator == anim) return;
         EnemyAttackCompleted?.Invoke(DmgPoints);
+        isAttackable = true;
     }
     public int SetDamage(int dmg)
     {
@@ -88,20 +91,30 @@ public class Enemy : CellContent
         anim.SetTrigger("Damage");
     }
 
+    public bool IsAttackable()
+    {
+        return isAttackable;
+    }
+
 
     public override void OnContentClicked(Player player, List<Enemy> openEnemy, BaseCell cellClicked)
     {
+        if (!IsAttackable()) return;
+     
         transform.LookAt(player.transform.position);
         currentcellClicked = cellClicked;
-        player.SetAttackAnimation();
+       
+            player.SetAttackAnimation(this);
+            isAttackable = false;
 
+            player.SetPlayerinteractionEnemyLink(this);
+            SetDamageAnimation();
+            SetDamage(player.DmgPoints);
+            HitBar.ChangeEnemyHitBarFillAmount(CurrentHitPoints, BasetHitPoints);
+            //uiController.UpdateEnemyTextInfo(this);
+            StateChanged?.Invoke(this);
 
-       player.SetPlayerinteractionEnemyLink(this);
-        SetDamageAnimation();
-        SetDamage(player.DmgPoints);
-        HitBar.ChangeEnemyHitBarFillAmount(CurrentHitPoints, BasetHitPoints);
-        //uiController.UpdateEnemyTextInfo(this);
-        StateChanged?.Invoke(this);
+            Debug.Log(isAttackable);
     }
 
     public override void CheckEnemyDeath()

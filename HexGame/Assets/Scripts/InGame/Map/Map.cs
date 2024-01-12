@@ -118,7 +118,7 @@ public class Map //: MonoBehaviour
         }
     }
 
-private void OnCellClicked(BaseCell cellClicked)
+    private void OnCellClicked(BaseCell cellClicked)
     {
         CellClicked?.Invoke(cellClicked);
 

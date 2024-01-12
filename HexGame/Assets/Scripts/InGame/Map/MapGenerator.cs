@@ -204,48 +204,6 @@ public class MapGenerator : MonoBehaviour
         return nList;
     }
 
-    /*List<Vector2Int> GetALLSpawnedNeighbours(Vector2Int vect, List<Vector2Int> missingCellCoordinates, List<Vector2Int> map, List<Vector2Int> deleted, int rows, int columns)
-    {
-        var checkNeighbors = GetALLNeighbours(vect, missingCellCoordinates, rows, columns);
-        var spawnedNeighbours = new List<Vector2Int>();
-
-        foreach (var neighbour in checkNeighbors)
-        {
-            if (map.Contains(neighbour) && !deleted.Contains(neighbour))
-            {
-                spawnedNeighbours.Add(neighbour);
-            }
-        }
-
-        return spawnedNeighbours;
-    }*/
-
-    /*private void SetContentPrefab(BaseCell cell)
-    {
-        if (cell.ContentType == CellType.StartCell || cell.ContentType == CellType.EndCell) return;
-       
-        int value = Random.Range(0, 3); //1 - bonus, 2 - enemy, 0 - empty
-        if (value == 1)                                                                                                                                         //TO DO if => switch case
-        {
-            cell.ContentType = CellType.BonusCell;//BonusCell
-            var content = Instantiate(CellsContent[CheckTypeOfBonus()], transform.position, transform.rotation, transform);
-            content.gameObject.SetActive(false);
-            cell.SetContentLink(content);
-        }
-        else if (value == 2)
-        {
-            cell.ContentType = CellType.EnemyCell;//EnemyCell
-            var content = Instantiate(CellsContent[CheckTypeOfEnemy()], transform.position, transform.rotation, transform);
-            content.gameObject.SetActive(false);                                                                                                                 // TO DO incapsulate
-            cell.SetContentLink(content);                                                                                                                        // TO DO celltype is needed???if not - delete, incapsulate this function into basecell (parameter - prefab, celltype??? if needed - rename to content type) 
-            content.ContentClicked += cell.OnCellClicked;
-        }
-        else
-        {
-            cell.ContentType = CellType.EmptyCell;//Empty 
-        }
-    }*/
-
     private void SetContentPrefab(BaseCell cell)
     {
         if (cell.ContentType == CellType.StartCell | cell.ContentType == CellType.EndCell) return;

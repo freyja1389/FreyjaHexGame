@@ -15,6 +15,8 @@ public class UIController : MonoBehaviour
     private Text EnemyInfoPref;
     [SerializeField]
     private Canvas WSCanvas;
+    [SerializeField]
+    private Text LvlInfo;
 
     public Image PlayerHPBar;
     public Text PlayersHPTextBox;
@@ -40,6 +42,12 @@ public class UIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+    }
+
+    public void UpdateLvlInfo(int lvl)
+    {
+        LvlInfo.text = "Level: " + lvl.ToString();
 
     }
 
@@ -150,9 +158,16 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void NextLevelMenuSpawn()
+    public void NextLevelMenuSpawn(bool win )
     {
-      MenuControls.NextLevelMenuPanel.SetActive(true);
+        if (win)
+        {
+            MenuControls.ChangeNextLevelMenuButtonText("Next level");
+        }
+        else
+        {
+            MenuControls.ChangeNextLevelMenuButtonText("Retry level");
+        }    
+        MenuControls.NextLevelMenuPanel.SetActive(true);
     }
-
 }
