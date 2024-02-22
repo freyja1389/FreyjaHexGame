@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField]
-    private Image enemyHitBar;
+    //[SerializeField]
+    //private Image enemyHitBar;
     [SerializeField]
     private Text GameOverTextBar;
     [SerializeField]
@@ -27,41 +28,38 @@ public class UIController : MonoBehaviour
     public ItemSlot ButtonBonusHealer;
 
     public GameObject ItemsPanel;
+    public BaseMenuControls Menu;
 
     public List<ItemSlot> BonusButtons;
 
     public InGameMenuControls MenuControls;
 
+    //public InventoryManager InventoryManager;
+
+    //public InventoryManager InventoryManagerPrefab;
+
+
 
     // Start is called before the first frame update
+    void Awake()
+    {
+        var instance = GameSceneManager.GetInstance();
+        instance.UIController = this;
+    }
+
     void Start()
     {
+        MenuControls.NextLevelClicked += WhenNextLevelClicked;
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     public void UpdateLvlInfo(int lvl)
     {
         LvlInfo.text = "Level: " + lvl.ToString();
-
     }
 
-    public void ChangeEnemyHitBarFillAmount(int currentHp, int baseHp)
-    {
-        if (currentHp == baseHp)
-        {
-            enemyHitBar.fillAmount = 100; //enemy has 100% HP
-        }
-        else
-        {
-            enemyHitBar.fillAmount = (float)currentHp / (float)baseHp;
-        }
-    }
+    
 
     public void UpdateEnemyTextInfo(Enemy enemy)
     {
@@ -126,6 +124,7 @@ public class UIController : MonoBehaviour
 
     public void ReInit()
     {
+       // LoadBonusesFromInventory();
         GameOverTextBar.gameObject.SetActive(false);
     }
 
@@ -135,7 +134,6 @@ public class UIController : MonoBehaviour
         {
             BonusButtons.Add(bonusButton);
         }
-
     }
 
     public void RemoveBonusButton(ItemSlot button)
@@ -147,7 +145,7 @@ public class UIController : MonoBehaviour
     {
         if (content is Enemy enemy)
         {
-            UIController enemyBar = Instantiate(enemy.EnemyHitBarPref, new Vector3(enemy.transform.position.x, 1, enemy.transform.position.z), Quaternion.Euler(90, 0, 0), WSCanvas.transform);
+            SceneUI enemyBar = Instantiate(enemy.EnemyHitBarPref, new Vector3(enemy.transform.position.x, 1, enemy.transform.position.z), Quaternion.Euler(90, 0, 0), WSCanvas.transform);
             enemyBar.ChangeEnemyHitBarFillAmount(enemy.CurrentHitPoints, enemy.BasetHitPoints);
             enemy.HitBar = enemyBar;
 
@@ -158,7 +156,7 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void NextLevelMenuSpawn(bool win )
+    public void NextLevelMenuSpawn(bool win)
     {
         if (win)
         {
@@ -167,7 +165,54 @@ public class UIController : MonoBehaviour
         else
         {
             MenuControls.ChangeNextLevelMenuButtonText("Retry level");
-        }    
+        }
         MenuControls.NextLevelMenuPanel.SetActive(true);
     }
+
+    public void LoadBonusesFromInventory()
+    {
+        foreach (ItemSlot button in BonusButtons)
+        {
+            if (BonusButtons.Count < 3)
+            {
+                //AddBonusButton(button);
+                button.transform.SetParent(ItemsPanel.transform);
+                button.transform.localScale = new Vector3(1, 1, 1);
+            }
+        }
+    }
+
+    public List<ItemSlot> GetBonusButtons()
+    {
+        return BonusButtons;   
+    }
+
+    private void WhenNextLevelClicked()
+    {
+        DeleteAllEnemyUIElements();
+    }
+
+    private void DeleteAllEnemyUIElements()
+    {
+        var childscount = WSCanvas.transform.childCount;
+        var childList = new List<GameObject>();
+
+        for (int i = 0; i < childscount; i++)
+        {
+            childList.Add(WSCanvas.transform.GetChild(i).gameObject);
+        }
+
+        foreach (var item in childList)
+        {
+            Destroy(item);
+        }
+
+    }
+
+    public void OnDestroy()
+    {
+        Debug.Log("UIController destroy");
+    }
+
+    
 }

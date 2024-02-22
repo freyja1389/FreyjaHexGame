@@ -10,9 +10,9 @@ public class Enemy : CellContent, IFighter
     public int DmgPoints;
     public int CurrentHitPoints { get; protected set; }
     public int BasetHitPoints;
-    public  UIController HitBar;
+    public SceneUI HitBar;
     public Text EnemyInfo;
-    public UIController EnemyHitBarPref;
+    public SceneUI EnemyHitBarPref;
     private BaseCell currentcellClicked;
     //public event Action<int> EnemyAlive;
     public event Action<int> EnemyAttackStarted;

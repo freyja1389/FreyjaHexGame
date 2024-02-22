@@ -27,7 +27,10 @@ public class MapGenerator : MonoBehaviour
     {
         foreach (Transform item in transform)
         {
+            // if (item.gameObject.GetComponent<Bonus>() == null)
+            //{
             Destroy(item.gameObject);
+            //}
         }
     }
     private int CheckTypeOfEnemy()
@@ -226,7 +229,7 @@ public class MapGenerator : MonoBehaviour
         }     
     }
 
-        public Map MapGenerate(int rows, int columns, Player player, int lvl)
+    public Map MapGenerate(int rows, int columns, Player player, int lvl)
     {
         //int lvlkoeff = (int)Mathf.Round(lvl / 2);
         //rows = rows + lvlkoeff;
@@ -302,7 +305,7 @@ public class MapGenerator : MonoBehaviour
 
         SetStartEndCell(map, player);
         //CheckSeparateCells(map, missingCellCoordinates, rows, columns);
-        
+
         return new Map(map, startCell, endCell);
     }
 
@@ -329,7 +332,7 @@ public class MapGenerator : MonoBehaviour
          startElem.ContentType = CellType.StartCell;
         if (gController.player == null)
         {
-            var playerInst = Instantiate(PlayerPrefab, startElem.transform.position, transform.rotation);
+            var playerInst = Instantiate(PlayerPrefab, startElem.transform.position, transform.rotation, gameObject.transform);
 
             gController.player = playerInst.GetComponent<Player>();
             gController.player.PlayerInstance = playerInst;
@@ -361,7 +364,7 @@ public class MapGenerator : MonoBehaviour
     {
         BaseCell cell;
         var v3coords = GetWorldPosition(coords.x, coords.y);
-        cell = Instantiate(cellType, v3coords, cellType.transform.rotation, transform);
+        cell = Instantiate(cellType, v3coords, cellType.transform.rotation, this.transform);
         cell.CellIndex = new Vector2Int(coords.x, coords.y);
         cell.name = cell.name + cell.CellIndex.ToString();
        // HexCells.Add(cell);

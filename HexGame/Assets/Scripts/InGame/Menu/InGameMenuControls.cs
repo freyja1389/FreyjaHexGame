@@ -12,28 +12,39 @@ public class InGameMenuControls : BaseMenuControls
     public GameObject NextLevelMenuPanel;
     public GameObject BackMenuPanel;
 
-    public event Action StartClicked;
+
+
+    public void Start()
+    {
+       
+    }
 
     public void ChangeNextLevelMenuButtonText(string text)
     {
         nextLevelMenuButtonText.text = text;
     }
+
     public void BackToGame()
     {
         BackMenuPanel.SetActive(true);
         ActivateMenuPanel(false);
     }
-    public void PressedNextLevel()
+
+    public override void PressedNextLevel()
     {
-        StartClicked?.Invoke();
         NextLevelMenuPanel.SetActive(false);
+        base.PressedNextLevel();
+       // base.SceneReloaded += WhenSceneReload;
+        //
+
     }
 
     public override void PressedStart()
     {
-        StartClicked?.Invoke();
         base.PressedStart();
+       // StartClicked?.Invoke();
     }
+
     public void ActivateBackMenuPanel(bool param)
     {
         BackMenuPanel.SetActive(param);

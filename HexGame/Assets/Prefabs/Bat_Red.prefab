@@ -547,7 +547,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &95000011442643512
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -564,7 +564,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &-2654972816786220602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -578,10 +579,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DmgPoints: 0
-  HitPoints: 0
+  BasetHitPoints: 0
   HitBar: {fileID: 0}
   EnemyInfo: {fileID: 0}
-  EnemyHitBarPref: {fileID: 6523213840051069563, guid: 9d82baeb9ffe9e541a83d0bc9231c7eb, type: 3}
+  EnemyHitBarPref: {fileID: -6184048283897553174, guid: 9d82baeb9ffe9e541a83d0bc9231c7eb,
+    type: 3}
   HealPoints: 0
 --- !u!1 &1000011643250032
 GameObject:

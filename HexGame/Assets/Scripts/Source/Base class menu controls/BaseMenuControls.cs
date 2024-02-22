@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Audio;
+using System;
 
 public abstract class BaseMenuControls : MonoBehaviour
 {
@@ -13,9 +14,11 @@ public abstract class BaseMenuControls : MonoBehaviour
     public AudioSource sorceAud;
     public AudioClip muz1;
     public AudioClip muz2;
-    [SerializeField]
-    protected SceneManager sceneManager;
-    //public GameObject MenuPanel;
+    public SceneReloader SceneReloader;
+
+    public event Action NextLevelClicked;
+    //public event Action StartClicked;
+
 
     public void PressedExit()
     {
@@ -27,7 +30,19 @@ public abstract class BaseMenuControls : MonoBehaviour
     {
         sorceAud.clip = muz2;
         sorceAud.Play();
-        sceneManager.LoadMainScene();
+        
+        SceneReloader.SceneWasLoaded += WhenUISceneWasLoaded;
+        SceneReloader.LoadAdditiveSceneWithCorutine("UIScene");
+    }
+
+   
+    public virtual void PressedNextLevel()
+    {
+        sorceAud.clip = muz2;
+        sorceAud.Play();
+        SceneReloader.SceneWasUnloaded += WhenSceneWasUnloaded;
+        SceneReloader.UnLoadSceneWithCorutine("SampleScene");
+        NextLevelClicked.Invoke();       
     }
 
 
@@ -63,5 +78,34 @@ public abstract class BaseMenuControls : MonoBehaviour
     public void ActivateMenuPanel(bool param)
     {
         MenuPanel.SetActive(param);
+    }
+
+    private void WhenSceneWasUnloaded()
+    {
+        SceneReloader.SceneWasUnloaded -= WhenSceneWasUnloaded;
+        SceneReloader.SceneWasLoaded += WhenSceneWasLoaded;
+        SceneReloader.LoadAdditiveSceneWithCorutine("SampleScene");
+    }
+
+    private void WhenSceneWasLoaded()
+    {
+        SceneReloader.SceneWasUnloaded -= WhenSceneWasLoaded;
+        if (SceneManager.GetSceneByName("MenuScene").isLoaded)
+        {
+            SceneReloader.UnLoadSceneWithCorutine("MenuScene");
+        }
+    }
+
+   /* private void WhenMenuSceneWasUnloaded()
+    {
+        SceneReloader.SceneWasLoaded -= WhenMenuSceneWasUnloaded;
+        NextLevelClicked?.Invoke();
+    }*/
+
+    private void WhenUISceneWasLoaded()
+    {
+        SceneReloader.SceneWasLoaded -= WhenUISceneWasLoaded;
+        SceneReloader.SceneWasLoaded += WhenSceneWasLoaded;
+        SceneReloader.LoadAdditiveSceneWithCorutine("SampleScene");
     }
 }

@@ -24,7 +24,7 @@ public class GameController : MonoBehaviour
 
     // public UIController EnemyHitBarPref;
     
-    public Canvas UICanvas;
+   // public Canvas UICanvas;
     public UIController UIController;
     public Player player;
 
@@ -34,8 +34,6 @@ public class GameController : MonoBehaviour
     private CellMaterials cellMaterials;
     [SerializeField]
     private GameMenuConstants gameMenuConstants;
-    [SerializeField]
-    private SceneManager sceneManager;
 
     //private List<BaseCell> neighbors;
     private Vector2Int playerPositionInMap;
@@ -46,18 +44,39 @@ public class GameController : MonoBehaviour
     
     public DamageSTM damageAnimSTM;
     private Map map;
+    private GameSceneManager gameSceneManager;
 
 
+    private void Awake()
+    {
+        gameSceneManager = GameSceneManager.GetInstance();
+        gameSceneManager.GameController = this;
+    }
     void Start()
     {
+        Debug.Log("game Controller");
         //Menu.StartClicked += OnStartClicked; //// subcribe on click start not needed
+        SetUILinks(gameSceneManager);
         StartLevel();
+        //Menu.NextLevelClicked += StartLevel;
+    }
+
+
+    private void SetUILinks(GameSceneManager gameSceneManager)
+    {
+        UIController = gameSceneManager.UIController;
+        Menu = UIController.Menu;
+
     }
 
     private void StartLevel()
     {
-        ClearTheMap();
-      
+        //ClearTheMap();
+        if (UIController == null)
+        {
+            SetUILinks(gameSceneManager);
+        }
+
         LoadProgress();
 
         UIController.ReInit();
@@ -80,6 +99,11 @@ public class GameController : MonoBehaviour
         map.BonusClicked += MoveBonusIntoBonusCell;
 
         PrevCell = map.StartCell;
+       // var bonusButtons = UIController.GetBonusButtons();
+       // foreach (ItemSlot bonusButton in bonusButtons)
+       //{
+          //  bonusButton.UseBonus += OnUseBonus;
+        //}
     }
 
 
@@ -87,6 +111,7 @@ public class GameController : MonoBehaviour
     {
         if (mapGenerator is null) return;
         mapGenerator.Clear();
+        map = null;
     }
 
     public void CellUsed(BaseCell clickedCell)
@@ -344,5 +369,10 @@ public class GameController : MonoBehaviour
             neighbor.SetMaterial(cellMaterials.GetMaterial(CellMaterials.MaterialNames.Locked));
         }
 
+    }
+
+    public void OnDestroy()
+    {
+        Debug.Log("GameController destroy");
     }
 }
